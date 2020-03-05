@@ -1,0 +1,17 @@
+{
+    "compileOnSave": false,
+    "compilerOptions": {
+        "allowSyntheticDefaultImports": true,
+        "downlevelIteration": true,
+        "emitDecoratorMetadata": true,
+        "experimentalDecorators": true,
+        "noImplicitAny": true,
+        "removeComments": true,
+        "sourceMap": true,
+        "target": "ES2015",
+        "module": "CommonJS",
+        "outDir": "./dist",
+        "listFiles": false
+    },
+    "exclude": ["node_modules", "**/*spec.ts"]
+}

@@ -1,0 +1,16 @@
+{
+    "extends": "./tsconfig.json",
+
+    "compilerOptions": {
+        "importHelpers": true,
+        "typeRoots": ["node_modules/@types"],
+        "lib": ["ES2018", "DOM"]
+    },    
+
+    "include": ["src/client/**/*.ts"],
+    
+    "angularCompilerOptions": {
+        "fullTemplateTypeCheck": true,
+        "strictInjectionParameters": true
+    }
+}
