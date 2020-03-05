@@ -1,8 +1,8 @@
 {
-    "name": "shoping-list-na",
+    "name": "nestjs-with-angular",
     "version": "0.0.1",
-    "description": "Very basic shoping list",
-    "author": "Anton Stephanyak",
+    "description": "Basic toolkit for Angular and NestJS development",
+    "author": "Ant0nRocket",
     "scripts": {
         "build:all": "nest build && ng build",
         "build:server": "nest build",
