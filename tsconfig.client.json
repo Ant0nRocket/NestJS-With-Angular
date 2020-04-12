@@ -8,6 +8,7 @@
     },    
 
     "include": ["src/client/**/*.ts"],
+    "exclude": ["src/client/environments/environment.prod.ts"],
     
     "angularCompilerOptions": {
         "fullTemplateTypeCheck": true,
