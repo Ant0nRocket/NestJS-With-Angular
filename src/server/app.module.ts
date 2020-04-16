@@ -6,6 +6,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 
 import { AppController } from './app.controller';
 import { apiConfig } from '../shared/api.config';
+import { AppGateway } from './app.gateway';
 
 @Module({
     imports: [
@@ -14,11 +15,12 @@ import { apiConfig } from '../shared/api.config';
         }),
         MongooseModule.forRoot(apiConfig.dbUri, {
             connectionName: apiConfig.dbConnectionName,
-            useNewUrlParser: true, 
+            useNewUrlParser: true,
             useUnifiedTopology: true,
-            useCreateIndex: true 
+            useCreateIndex: true
         })
     ],
-    controllers: [ AppController ]
+    controllers: [AppController],
+    providers: [AppGateway]
 })
-export class AppModule {}
+export class AppModule { }

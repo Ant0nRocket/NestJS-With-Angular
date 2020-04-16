@@ -1,0 +1,8 @@
+<h1>{{ title }}</h1>
+
+<input type="text" [(ngModel)]="message" placeholder="Type message here" />
+<button (click)="sendMessageToServer()">Send</button>
+
+<ul>
+    <li *ngFor="let m of messages">{{ m }}</li>
+</ul>
