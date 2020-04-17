@@ -29,6 +29,7 @@
         "@nestjs/serve-static": "^2.0.0",
         "@nestjs/websockets": "^7.0.7",
         "mongoose": "^5.9.7",
+        "ngx-socket-io": "^3.0.1",
         "rxjs": "^6.5.5",
         "tslib": "^1.10.0",
         "zone.js": "^0.10.2"

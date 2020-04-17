@@ -5,22 +5,26 @@ import { ServeStaticModule } from '@nestjs/serve-static';
 import { MongooseModule } from '@nestjs/mongoose';
 
 import { AppController } from './app.controller';
-import { apiConfig } from '../shared/api.config';
 import { AppGateway } from './app.gateway';
+import { apiConfig } from '../shared/api.config';
 
 @Module({
     imports: [
-        ServeStaticModule.forRoot({
-            rootPath: join(__dirname, '..', 'client')
-        }),
-        MongooseModule.forRoot(apiConfig.dbUri, {
-            connectionName: apiConfig.dbConnectionName,
-            useNewUrlParser: true,
-            useUnifiedTopology: true,
-            useCreateIndex: true
-        })
+        // ServeStaticModule.forRoot({
+        //     rootPath: join(__dirname, '..', 'client')
+        // }),
+        // MongooseModule.forRoot(apiConfig.dbUri, {
+        //     connectionName: apiConfig.dbConnectionName,
+        //     useNewUrlParser: true,
+        //     useUnifiedTopology: true,
+        //     useCreateIndex: true
+        // })
     ],
-    controllers: [AppController],
-    providers: [AppGateway]
+    controllers: [
+        // AppController
+    ],
+    providers: [
+        AppGateway
+    ]
 })
 export class AppModule { }
