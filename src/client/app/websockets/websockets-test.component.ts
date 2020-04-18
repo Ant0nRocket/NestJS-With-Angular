@@ -20,11 +20,18 @@ export class WebsocketsTestComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    this.wss.onMessage.subscribe(
+      (event) => {
+        this.messages.push(event.data);
+      }
+    );
   }
 
   sendMessageToServer() {
-    this.messages.push(this.message);
-    this.message = '';
+    this.wss.send({
+      event: 'msg2srv',
+      data: this.message
+    });
   }
 
 }
