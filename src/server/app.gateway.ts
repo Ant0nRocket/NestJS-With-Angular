@@ -1,6 +1,16 @@
-import { SubscribeMessage, WebSocketGateway, OnGatewayInit, WsResponse, OnGatewayConnection, OnGatewayDisconnect, WebSocketServer } from '@nestjs/websockets';
+import {
+  WebSocketGateway,
+  SubscribeMessage,
+  OnGatewayInit,
+  OnGatewayConnection,
+  OnGatewayDisconnect,
+  WebSocketServer,
+  WsResponse,
+} from '@nestjs/websockets';
 import { Logger } from '@nestjs/common';
-// import { Socket, Server } from 'socket.io';
+import * as shortid from 'shortid';
+import { IWebSocketsEvent } from '../shared/websockets/websockets-event.interface';
+import { WebSocketsDto } from '../shared/websockets/websockets.dto';
 
 @WebSocketGateway()
 export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
@@ -15,8 +25,18 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
   }
 
   handleConnection(client: any, ...args: any[]) {
+    client.id = shortid.generate();
+    const ev: IWebSocketsEvent = {
+      event: "connected",
+      data: {
+        uid: shortid.generate(),
+        content: client.id
+      }
+    };
+    client.send(JSON.stringify(ev));
     this.logger.log(`Client connected: ${client.id}`);
   }
+
   handleDisconnect(client: any) {
     this.logger.log(`Client disconnected: ${client.id}`);
   }

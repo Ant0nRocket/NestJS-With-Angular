@@ -2,14 +2,15 @@ import { Injectable } from '@angular/core';
 import { IWebSocketsEvent } from '../../../shared/websockets/websockets-event.interface';
 import { environment } from '../../environments/environment';
 import { apiConfig } from '../../../shared/api.config';
-import { Subject } from 'rxjs';
+import { Subject, Observable } from 'rxjs';
+import { filter } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
 })
 export class WebSocketsService {
 
-  onMessage: Subject<IWebSocketsEvent> = new Subject<IWebSocketsEvent>();
+  private webSocketSubject: Subject<IWebSocketsEvent> = new Subject<IWebSocketsEvent>();
 
   private ws: WebSocket;
   private url: string;
@@ -26,24 +27,25 @@ export class WebSocketsService {
   }
 
 
-  connect() {
+  private connect() {
     this.ws = new WebSocket(this.url);
 
     this.ws.onopen = () => {
+      console.log(`WebSocket connection established to ${this.url}`);
       this.ws.onmessage = (ev) => {
-        this.onMessage.next(JSON.parse(ev.data));
+        this.webSocketSubject.next(JSON.parse(ev.data));
       }
     }
 
     this.ws.onerror = () => {
       console.log('WebSocket error occured. Disconnected.');
       this.ws.close();
+      // let's try reconnect every 5 sec.
       setTimeout(() => { this.reconnect(); }, 5000);
     }
   }
 
-
-  reconnect() {
+  private reconnect() {
     if (this.ws.readyState === this.ws.OPEN) {
       this.ws.close();
     }
@@ -51,51 +53,24 @@ export class WebSocketsService {
     this.connect();
   }
 
+  getSubjectFor(uid: string): Observable<IWebSocketsEvent> {
+    return this.webSocketSubject.pipe(
+      filter(ev => ev.data.uid === uid)
+    );
+  }
 
-  send(wsEvent: IWebSocketsEvent): boolean {
+  send(uid: string, content: string): boolean {
     if (this.ws.readyState === this.ws.OPEN) {
-      this.ws.send(JSON.stringify(wsEvent));
+      const ev: IWebSocketsEvent = {
+        event: 'msg2srv',
+        data: {
+          uid,
+          content
+        }
+      };
+      this.ws.send(JSON.stringify(ev));
       return true;
     }
     return false;
   }
-
-  // constructor() {
-  //   // // console.log(location);
-  //   // let url = location.host + '/socket';
-  //   // if(!environment.production) { // if DEBUG
-  //   //   url = url.replace(':4200', ':3000');
-  //   // }
-  //   // console.log(url);
-
-  //   const ws = new WebSocket('http://localhost:3000');
-
-  //   ws.onerror = (ev) => {
-  //     console.log(ev);
-  //   }
-  //   ws.onopen = (ev) => {
-  //     const m: IWebSocketsEvent = { event: 'msg2srv', data: 'test' }
-  //     ws.send(JSON.stringify(m));
-  //   }
-
-
-
-
-  //   console.log(ws);
-  // }
-
-  // constructor(
-  //   private socket: Socket
-  // ) {
-  //   socket.on('error', () => {
-  //     console.log('ERROR');
-  //   });
-
-  //   socket.emit('msg2srv', 'test', () => {
-  //     console.log('done');
-  //   })
-  // }
-
-
-
 }
