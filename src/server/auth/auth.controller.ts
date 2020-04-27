@@ -10,7 +10,6 @@ import { apiConfig } from '../../shared/api.config';
 import { AuthService } from './auth.service';
 import { AuthCredentialsDto } from '../../shared/auth/auth-credentials.dto';
 import { AuthTokenDto } from '../../shared/auth/auth-token.dto';
-import { User } from '../../shared/models/user';
 
 @Controller()
 export class AuthController {
@@ -19,14 +18,14 @@ export class AuthController {
 
 
     @Post(apiConfig.urlSignup)
-    async signup(@Body(ValidationPipe) credentials: AuthCredentialsDto): Promise<void> {
+    async signup(@Body(ValidationPipe) credentials: AuthCredentialsDto): Promise<AuthTokenDto> {
         const createdUser = await this.authService.signup(credentials);
         if (!createdUser) {
             throw new ConflictException();
         }
-        // const { _id, username } = await this.authService.signUp(authCredentials);
-        // return { _id, username };
-        //return await this.login(authCredentials);
+
+        // New user created, why don't return access token?
+        return this.login(credentials);
     }
 
 
