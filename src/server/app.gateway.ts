@@ -7,11 +7,13 @@ import {
   WebSocketServer,
   WsResponse,
 } from '@nestjs/websockets';
-import { Logger } from '@nestjs/common';
+import { Logger, Injectable } from '@nestjs/common';
 import * as shortid from 'shortid';
 import { IWebSocketsEvent } from '../shared/websockets/websockets-event.interface';
 import { WebSocketsDto } from '../shared/websockets/websockets.dto';
+import { WebSocketsTheme } from '../shared/websockets/websockets-theme.enum';
 
+@Injectable()
 @WebSocketGateway()
 export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
 
@@ -29,7 +31,8 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
     const ev: IWebSocketsEvent = {
       event: "connected",
       data: {
-        uid: shortid.generate(),
+        сid: "",
+        theme: WebSocketsTheme.ClientConnected,
         content: client.id
       }
     };
@@ -42,7 +45,22 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
   }
 
   @SubscribeMessage('msg2srv')
-  handleMessage(client: any, data: any): WsResponse<string> {
-    return { event: 'msg2client', data };
+  handleMessage(client: any, data: any): WsResponse<WebSocketsDto> {
+    const handledData = this.handleDataTheme(data);
+    const response: WsResponse<WebSocketsDto> = {
+      event: 'msg2client',
+      data: handledData
+    };
+    return response;
+  }
+
+  handleDataTheme(data: WebSocketsDto): WebSocketsDto {
+    if (data.theme === WebSocketsTheme.SendBackData) {
+      return data;
+    }
+
+    if (data.theme === WebSocketsTheme.HowManyClientsConnected) {
+      data.content = this.server.clients.length;
+    }
   }
 }

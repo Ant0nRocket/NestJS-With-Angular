@@ -1,3 +1,5 @@
+import { WebSocketsTheme } from "./websockets-theme.enum";
+
 export class WebSocketsDto {
     /** Used in WebSocket service to filter
      * requests by clients.
@@ -9,7 +11,10 @@ export class WebSocketsDto {
      * Of course, if you need that every component receive every
      * message - provide same ID (blank string, etc.)
      */
-    uid: string;
+    сid: string;
+
+    /** Theme of message. Use it for logic. */
+    theme: WebSocketsTheme;
 
     /** Some payload. Use "as" syntax of TypeScript for IntelliSence */
     content: any;

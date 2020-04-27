@@ -4,6 +4,7 @@ import { environment } from '../../environments/environment';
 import { apiConfig } from '../../../shared/api.config';
 import { Subject, Observable } from 'rxjs';
 import { filter } from 'rxjs/operators';
+import { WebSocketsDto } from '../../../shared/websockets/websockets.dto';
 
 @Injectable({
   providedIn: 'root'
@@ -30,10 +31,11 @@ export class WebSocketsService {
   private connect() {
     this.ws = new WebSocket(this.url);
 
-    this.ws.onopen = () => {
+    this.ws.onopen = (event) => {
       console.log(`WebSocket connection established to ${this.url}`);
       this.ws.onmessage = (ev) => {
-        this.webSocketSubject.next(JSON.parse(ev.data));
+        const data: IWebSocketsEvent = JSON.parse(ev.data);
+        this.webSocketSubject.next(data);
       }
     }
 
@@ -55,18 +57,16 @@ export class WebSocketsService {
 
   getSubjectFor(uid: string): Observable<IWebSocketsEvent> {
     return this.webSocketSubject.pipe(
-      filter(ev => ev.data.uid === uid)
+      filter(ev => ev.event === 'msg2client'),
+      filter(ev => ev.data.сid === uid)
     );
   }
 
-  send(uid: string, content: string): boolean {
+  send(dto: WebSocketsDto): boolean {
     if (this.ws.readyState === this.ws.OPEN) {
       const ev: IWebSocketsEvent = {
         event: 'msg2srv',
-        data: {
-          uid,
-          content
-        }
+        data: dto
       };
       this.ws.send(JSON.stringify(ev));
       return true;
