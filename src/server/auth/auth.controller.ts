@@ -25,7 +25,7 @@ export class AuthController {
         }
 
         // New user created, why don't return access token?
-        return this.login(credentials);
+        return this.authService.login(credentials);
     }
 
 

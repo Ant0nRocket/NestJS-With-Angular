@@ -15,7 +15,8 @@ export const apiConfig = {
     minPasswordLen: 1,
     maxPasswordLen: 30,
     usernameRegex: /^[A-Za-zА-Яа-я0-9\s.\-_]+$/,
-    passwordRegex: /^[A-Za-zА-Яа-я0-9\s.\-`~!@#$%^&*()_=+|?]+$/
+    passwordRegex: /^[A-Za-zА-Яа-я0-9\s.\-`~!@#$%^&*()_=+|?]+$/,
+    socketAuthDelay: 5000, // 5 seconds
 }
 
 export function setApiPort(port: any) {

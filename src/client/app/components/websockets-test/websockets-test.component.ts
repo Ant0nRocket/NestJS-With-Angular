@@ -2,9 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { WebSocketsService } from '../../websockets/websockets.service';
 import * as shortid from 'shortid';
 import { Observable } from 'rxjs';
-import { IWebSocketsEvent } from '../../../../shared/websockets/websockets-event.interface';
 import { WebSocketsTheme } from '../../../../shared/websockets/websockets-theme.enum';
 import { WebSocketsDto } from '../../../../shared/websockets/websockets.dto';
+import { AuthService } from '../../auth/auth.service';
 
 @Component({
   selector: 'app-websockets-test',
@@ -14,29 +14,30 @@ export class WebsocketsTestComponent implements OnInit {
 
   title: string = 'NestJS WebSockets test';
   message: string = '';
-  obs: Observable<IWebSocketsEvent>;
+  obs: Observable<WebSocketsDto>;
 
   messages: string[] = [
     'Build in message #1',
     'Build in message #2'
   ]
 
-  private uid: string;
+  private cid: string;
 
   constructor(
-    private wss: WebSocketsService
+    private wss: WebSocketsService,
+    private authService: AuthService
   ) {
 
   }
 
   ngOnInit(): void {
-    this.uid = shortid.generate();
+    this.cid = shortid.generate();
 
-    this.obs = this.wss.getSubjectFor(this.uid);
+    this.obs = this.wss.getSubjectFor(this.cid);
     this.obs.subscribe(
-      (event) => {
-        if (event.data.theme === WebSocketsTheme.SendBackData) {
-          this.messages.push(event.data.content);
+      (dto) => {
+        if (dto.theme === WebSocketsTheme.SendBackData) {
+          this.messages.push(dto.content);
         }
       }
     );
@@ -44,7 +45,7 @@ export class WebsocketsTestComponent implements OnInit {
 
   sendMessageToServer() {
     const dto: WebSocketsDto = {
-      сid: this.uid,
+      cid: this.cid,
       theme: WebSocketsTheme.SendBackData,
       content: this.message
     };

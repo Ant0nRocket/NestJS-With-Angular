@@ -11,7 +11,7 @@ export class WebSocketsDto {
      * Of course, if you need that every component receive every
      * message - provide same ID (blank string, etc.)
      */
-    сid: string;
+    cid: string;
 
     /** Theme of message. Use it for logic. */
     theme: WebSocketsTheme;

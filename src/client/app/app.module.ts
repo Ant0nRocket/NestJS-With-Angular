@@ -5,6 +5,8 @@ import { WebsocketsModule } from './websockets/websockets.module';
 
 import { AppComponent } from './app.component';
 import { WebsocketsTestComponent } from './components/websockets-test/websockets-test.component';
+import { AuthService } from './auth/auth.service';
+import { AuthModule } from './auth/auth.module';
 
 @NgModule({
   declarations: [
@@ -14,9 +16,11 @@ import { WebsocketsTestComponent } from './components/websockets-test/websockets
   imports: [
     BrowserModule,
     FormsModule,
-    WebsocketsModule
+    AuthModule,
+    WebsocketsModule,
   ],
-  providers: [],
+  providers: [
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

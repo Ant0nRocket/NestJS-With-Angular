@@ -1,21 +1,24 @@
 import {
   WebSocketGateway,
-  SubscribeMessage,
   OnGatewayInit,
   OnGatewayConnection,
   OnGatewayDisconnect,
   WebSocketServer,
-  WsResponse,
 } from '@nestjs/websockets';
 import { Logger, Injectable } from '@nestjs/common';
 import * as shortid from 'shortid';
-import { IWebSocketsEvent } from '../shared/websockets/websockets-event.interface';
 import { WebSocketsDto } from '../shared/websockets/websockets.dto';
 import { WebSocketsTheme } from '../shared/websockets/websockets-theme.enum';
+import { UsersRepository } from './db/users.repository';
+import { apiConfig } from '../shared/api.config';
 
 @Injectable()
 @WebSocketGateway()
 export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
+
+  constructor(
+    private usersRepository: UsersRepository
+  ) { }
 
   @WebSocketServer()
   private server: any;
@@ -28,39 +31,54 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
 
   handleConnection(client: any, ...args: any[]) {
     client.id = shortid.generate();
-    const ev: IWebSocketsEvent = {
-      event: "connected",
-      data: {
-        сid: "",
-        theme: WebSocketsTheme.ClientConnected,
-        content: client.id
-      }
+    (client as WebSocket).onmessage = (ev) => {
+      this.handleDto(ev.target as WebSocket, JSON.parse(ev.data));
     };
-    client.send(JSON.stringify(ev));
+
     this.logger.log(`Client connected: ${client.id}`);
+    this.send2Client(client as WebSocket, WebSocketsTheme.ClientConnected);
+
+    // let's start timer that wait 10 sec for client
+    // to provide auth token. If no token - disconnect client
+    client.disconnectTimer = setTimeout(() => {
+      this.send2Client(client, WebSocketsTheme.Unauthorized);
+      (client as WebSocket).close();
+    }, apiConfig.socketAuthDelay);
   }
 
-  handleDisconnect(client: any) {
-    this.logger.log(`Client disconnected: ${client.id}`);
+  handleDisconnect(client: WebSocket) {
+    client.onmessage = null; // not sure that it's required
+    this.logger.log(`Client disconnected: ${(client as any).id}`);
   }
 
-  @SubscribeMessage('msg2srv')
-  handleMessage(client: any, data: any): WsResponse<WebSocketsDto> {
-    const handledData = this.handleDataTheme(data);
-    const response: WsResponse<WebSocketsDto> = {
-      event: 'msg2client',
-      data: handledData
-    };
-    return response;
-  }
+  handleDto(client: WebSocket, dto: WebSocketsDto): void {
+    switch (dto.theme) {
+      case WebSocketsTheme.SendBackData: {
+        this.send2Client(client, dto.theme, dto.content, dto.cid); break;
+      }
 
-  handleDataTheme(data: WebSocketsDto): WebSocketsDto {
-    if (data.theme === WebSocketsTheme.SendBackData) {
-      return data;
+      case WebSocketsTheme.AuthenticateWithToken: {
+        this.handleClientAuthentication(client, dto); break;
+      }
+
+      default: {
+        this.send2Client(client, WebSocketsTheme.UnknownCommand); break;
+      }
     }
+  }
 
-    if (data.theme === WebSocketsTheme.HowManyClientsConnected) {
-      data.content = this.server.clients.length;
+  send2Client(client: WebSocket, theme: WebSocketsTheme, content: any = {}, cid: string = ''): void {
+    const dto: WebSocketsDto = {
+      cid,
+      theme,
+      content
     }
+    client.send(JSON.stringify(dto));
+  }
+
+
+  handleClientAuthentication(client: any, dto: WebSocketsDto) {
+    this.logger.log(`Client ${client.id} authorized with token ${dto.content}`);
+    clearTimeout(client.disconnectTimer);
   }
 }
