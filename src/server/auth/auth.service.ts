@@ -48,8 +48,7 @@ export class AuthService {
                 return null;
 
             const payload: JwtPayload = {
-                id: foundUser._id,
-                username: foundUser.username
+                id: foundUser._id
             };
             const tokenDto: AuthTokenDto = {
                 token: jwt.sign(payload, password, { expiresIn: '7d' })

@@ -7,15 +7,19 @@ import { AppComponent } from './app.component';
 import { WebsocketsTestComponent } from './components/websockets-test/websockets-test.component';
 import { AuthService } from './auth/auth.service';
 import { AuthModule } from './auth/auth.module';
+import { AuthTestComponent } from './components/auth-test/auth-test.component';
+import { HttpClientModule } from '@angular/common/http';
 
 @NgModule({
   declarations: [
     AppComponent,
     WebsocketsTestComponent,
+    AuthTestComponent,
   ],
   imports: [
     BrowserModule,
     FormsModule,
+    HttpClientModule,
     AuthModule,
     WebsocketsModule,
   ],

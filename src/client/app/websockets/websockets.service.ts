@@ -24,11 +24,11 @@ export class WebSocketsService {
       this.url = this.url.replace('4200', `${apiConfig.apiPort}`);
     }
 
-    this.connect();
+    //this.connect();
   }
 
 
-  private connect() {
+  public connect() {
     this.ws = new WebSocket(this.url);
 
     this.ws.onopen = (event) => {

@@ -25,7 +25,7 @@ export class UsersRepository {
         const { username, email, phone, _id } = user;
         const searchRules = [];
 
-        if (_id) searchRules.push({ _id });
+        if (_id) searchRules.push({ _id: new ObjectId(_id) });
         if (username) searchRules.push({ username });
         if (email) searchRules.push({ email });
         if (phone) searchRules.push({ phone });

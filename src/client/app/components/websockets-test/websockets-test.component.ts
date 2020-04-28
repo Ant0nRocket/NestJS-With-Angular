@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { WebSocketsService } from '../../websockets/websockets.service';
 import * as shortid from 'shortid';
 import { Observable } from 'rxjs';
@@ -12,7 +12,9 @@ import { AuthService } from '../../auth/auth.service';
 })
 export class WebsocketsTestComponent implements OnInit {
 
+  @Input()
   title: string = 'NestJS WebSockets test';
+
   message: string = '';
   obs: Observable<WebSocketsDto>;
 

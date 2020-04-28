@@ -1,8 +1,19 @@
-<h1>{{ title }}</h1>
+<div class="alert alert-warning">
+    <h1>{{ title }}</h1>
 
-<input type="text" [(ngModel)]="message" placeholder="Type message here" />
-<button (click)="sendMessageToServer()">Send</button>
+    <div class="input-group flex-nowrap">
+        <div class="input-group-prepend">
+            <span class="input-group-text" id="addon-wrapping">Message:</span>
+        </div>
+        <input type="text" class="form-control" [(ngModel)]="message">
+        <button class="btn btn-success" (click)="sendMessageToServer()"
+            [disabled]="message.trim().length === 0">Send</button>
+    </div>
 
-<ul>
-    <li *ngFor="let m of messages">{{ m }}</li>
-</ul>
+
+
+    <ul>
+        <li *ngFor="let m of messages">{{ m }}</li>
+    </ul>
+</div>
+
