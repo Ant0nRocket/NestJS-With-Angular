@@ -67,6 +67,11 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
    * @param dto received DTO
    */
   handleDto(client: WebSocket, dto: WebSocketsDto): void {
+    // if client send something before authentication...
+    if (!(client as any).userId &&
+      dto.theme !== WebSocketsTheme.AuthenticateWithToken)
+      return; // ... then just skip this message.
+
     switch (dto.theme) {
       case WebSocketsTheme.SendBackData: {
         this.send2Client(client, dto.theme, dto.content, dto.cid); break;
