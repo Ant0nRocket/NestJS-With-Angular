@@ -7,9 +7,10 @@ import { AuthCredentialsDto } from '../../../../shared/auth/auth-credentials.dto
 import { apiConfig } from '../../../../shared/api.config';
 import { AuthTokenDto } from '../../../../shared/auth/auth-token.dto';
 import { ServiceBus } from '../service-bus.service';
+import { ServicesModule } from '../services.module';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: ServicesModule
 })
 export class AuthService {
 

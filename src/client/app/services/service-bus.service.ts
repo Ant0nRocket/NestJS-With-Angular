@@ -1,8 +1,9 @@
 import { Injectable, EventEmitter } from '@angular/core';
 import { WebSocketsDto } from '../../../shared/websockets/websockets.dto';
+import { ServicesModule } from './services.module';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: ServicesModule
 })
 export class ServiceBus {
 

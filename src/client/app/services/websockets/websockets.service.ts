@@ -4,9 +4,10 @@ import { WebSocketsDto } from '../../../../shared/websockets/websockets.dto';
 import { environment } from '../../../environments/environment';
 import { apiConfig } from '../../../../shared/api.config';
 import { ServiceBus } from '../service-bus.service';
+import { ServicesModule } from '../services.module';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: ServicesModule
 })
 export class WebSocketsService {
 
@@ -71,38 +72,4 @@ export class WebSocketsService {
     console.log(`Attempting to reconect to socket at ${this.url}`);
     this.connect();
   }
-
-  // /** 
-  //  * Use this if your component needs to receive all
-  //  * messages from websocket income (some service, etc.).
-  //  * Otherwise use getSubjectFor(cid: string).
-  //  */
-  // getSubject(): Observable<WebSocketsDto> {
-  //   return this.webSocketSubject.asObservable();
-  // }
-
-  // /** 
-  //  * Use when you need to receive only component-binded messages.
-  //  * Your component should provide any kind of ID.
-  //  */
-  // getSubjectFor(uid: string): Observable<WebSocketsDto> {
-  //   return this.webSocketSubject.pipe(
-  //     filter(ev => ev.cid === uid)
-  //   );
-  // }
-
-  // /**
-  //  * Sends message to server. Pay attension, if you have
-  //  * subscription from getSubscriptionFor() you should 
-  //  * provide same components ID (dto.cid) as in subscription.
-  //  * See websockets-test.component.ts for example.
-  //  * @param dto 
-  //  */
-  // send(dto: WebSocketsDto): boolean {
-  //   if (this.ws?.readyState === this.ws.OPEN) {
-  //     this.ws.send(JSON.stringify(dto));
-  //     return true;
-  //   }
-  //   return false;
-  // }
 }
