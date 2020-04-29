@@ -1,3 +1,52 @@
-<div class="alert alert-info">
-    <button class="btn btn-info" (click)="alert(authService.authToken)">Show token</button>
+<div class="alert alert-info el" *ngIf="authService.authToken">
+    <p>You are logged in (username will be provided later)</p>
+    <button class="btn btn-danger" (click)="logout()">LOG OUT</button>
+</div>
+
+<div class="alert alert-info el" *ngIf="!authService.authToken">
+
+    <a href="#" (click)="mode = 'log in'" *ngIf="mode === 'sign up'">
+        <strong>
+            I already have valid credentials
+        </strong>
+    </a>
+
+    <a href="#" (click)="mode = 'sign up'" *ngIf="mode === 'log in'">
+        <strong>
+            I want to register new user
+        </strong>
+    </a>
+
+    <div class="input-group first-input-field flex-nowrap">
+        <div class="input-group-prepend">
+            <span class="input-group-text" id="addon-wrapping">
+                {{ userIdTypeText }}
+            </span>
+        </div>
+        <input type="text" class="form-control" name="username" (keyup)="onUserIdKeyPressed($event)">        
+    </div>
+
+    <div class="input-group flex-nowrap">
+        <div class="input-group-prepend">
+            <span class="input-group-text" id="addon-wrapping">
+                Password (first time):
+            </span>
+        </div>
+        <input type="password" class="form-control" name="password" [(ngModel)]="credentials.password">
+    </div>
+
+    <div class="input-group flex-nowrap" *ngIf="mode === 'sign up'">
+        <div class="input-group-prepend">
+            <span class="input-group-text" id="addon-wrapping">
+                Password (second time):
+            </span>
+        </div>
+        <input type="password" class="form-control" name="password2" [(ngModel)]="credentials.password2">
+    </div>
+
+    <div class="alert alert-danger errors-list" *ngIf="hasErrors">
+        <p *ngFor="let error of errors">{{ error }}</p>
+    </div>
+
+    <button class="btn btn-info" (click)="submit()">{{ mode | uppercase}}</button>
 </div>

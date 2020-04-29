@@ -10,11 +10,18 @@ export class ServiceBus {
   /////////////////////////////////////////////////////////////////////////////
   // AUTHORIZATION
 
-  /** Occures when there is successfull (auth token become not-null) */
+  /** Occures when there is some sign-up error */
+  onSignUpError: EventEmitter<string> = new EventEmitter();
+
+  /** 
+   * Occures when there is successfull (auth token become not-null).
+   * It could happen in two cases: sign-up or login sucessfull and auth
+   * token returned from server.
+   */
   onAuthSuccess: EventEmitter<void> = new EventEmitter();
 
   /** Occures on auth failed (auth token become null) */
-  onAuthFailed: EventEmitter<void> = new EventEmitter();
+  onAuthFailed: EventEmitter<string> = new EventEmitter();
 
   /////////////////////////////////////////////////////////////////////////////
   // WEBSOCKETS

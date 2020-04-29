@@ -28,10 +28,11 @@ export class AuthService {
 
   set authToken(authToken: string) {
     this._authToken = authToken;
-    localStorage.setItem('authToken', authToken);
     if (this._authToken) { // success login
+      localStorage.setItem('authToken', authToken);
       this.serviceBus.onAuthSuccess.emit();
     } else { // failed log-in
+      localStorage.removeItem('authToken');
       this.serviceBus.onAuthFailed.emit();
     }
   }
@@ -41,9 +42,6 @@ export class AuthService {
     private http: HttpClient
   ) {
     console.log('Auth service created');
-    if (!environment.production) { // put your DEBUG token here if there is no signup/login
-      this.authToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVlYTcxNWI4YmIzMDQxMTUzODNmM2U0MSIsImlhdCI6MTU4ODA3NTQ2NywiZXhwIjoxNTg4NjgwMjY3fQ.j0Bea_kXy7lPi1yXlXDYHmoxrQdjiY8QtzDnJh4lkwQ';
-    }
 
     serviceBus.onIncomingWebSocketMessage.subscribe((dto: WebSocketsDto) => {
       if (dto.theme === WebSocketsTheme.ClientConnected) {
@@ -56,13 +54,34 @@ export class AuthService {
 
   signUp(authCredentials: AuthCredentialsDto) {
     this.http.post<AuthTokenDto>(apiConfig.urlSignup, authCredentials).subscribe(
+      // remember that authToken setter will call appropriate subject on bus
       (ok) => {
         this.authToken = ok.token;
       },
       (err) => {
         this.authToken = null;
+        if (err.error.statusCode === 409) // User exists
+          this.serviceBus.onSignUpError.emit('User already exists.');
+        if (err.error.statucCode === 400) // Bad request
+          this.serviceBus.onSignUpError.emit('Some error occured. Check input.');
+        if (err.error.statucCode === 500) // server error
+          this.serviceBus.onSignUpError.emit('Some server side error. Try later.');
       }
     );
+  }
 
+  login(authCredentials: AuthCredentialsDto) {
+    this.http.post<AuthTokenDto>(apiConfig.urlLogin, authCredentials).subscribe(
+      (ok) => {
+        this.authToken = ok.token;
+      },
+      () => {
+        this.authToken = null;
+      }
+    );
+  }
+
+  logout() {
+    this.authToken = null;
   }
 }
