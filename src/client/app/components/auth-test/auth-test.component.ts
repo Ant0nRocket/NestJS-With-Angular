@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { AuthService } from '../../services/auth/auth.service';
 
 @Component({
   selector: 'app-auth-test',
@@ -7,9 +8,15 @@ import { Component, OnInit } from '@angular/core';
 })
 export class AuthTestComponent implements OnInit {
 
-  constructor() { }
+  constructor(
+    public authService: AuthService,
+  ) { }
 
   ngOnInit(): void {
+  }
+
+  alert(m: any) {
+    window.alert(m);
   }
 
 }

@@ -5,11 +5,6 @@
   "projects": {
     "client": {
       "projectType": "application",
-      "schematics": {
-        "@schematics/angular:component": {
-          "styleext": "scss"
-        }
-      },
       "root": "",
       "sourceRoot": "src/client",
       "prefix": "app",
@@ -87,6 +82,11 @@
           }
         }
       }
+    }
+  },
+  "schematics": {
+    "@schematics/angular:component": {
+      "styleext": "scss"
     }
   }
 }

@@ -1,22 +1,21 @@
-import { Component, OnInit, Input } from '@angular/core';
-import { WebSocketsService } from '../../websockets/websockets.service';
+import { Component, OnInit, OnDestroy, Input } from '@angular/core';
 import * as shortid from 'shortid';
-import { Observable } from 'rxjs';
+import { Subscription } from 'rxjs';
 import { WebSocketsTheme } from '../../../../shared/websockets/websockets-theme.enum';
 import { WebSocketsDto } from '../../../../shared/websockets/websockets.dto';
-import { AuthService } from '../../auth/auth.service';
+import { ServiceBus } from '../../services/service-bus.service';
+import { AuthService } from '../../services/auth/auth.service';
 
 @Component({
   selector: 'app-websockets-test',
   templateUrl: './websockets-test.component.html'
 })
-export class WebsocketsTestComponent implements OnInit {
+export class WebsocketsTestComponent implements OnInit, OnDestroy {
 
   @Input()
   title: string = 'NestJS WebSockets test';
 
   message: string = '';
-  obs: Observable<WebSocketsDto>;
 
   messages: string[] = [
     'Build in message #1',
@@ -25,24 +24,28 @@ export class WebsocketsTestComponent implements OnInit {
 
   private cid: string;
 
+  private onWebSocketMessage: Subscription;
+
   constructor(
-    private wss: WebSocketsService,
-    private authService: AuthService
+    private serviceBus: ServiceBus,
   ) {
 
   }
 
   ngOnInit(): void {
     this.cid = shortid.generate();
-
-    this.obs = this.wss.getSubjectFor(this.cid);
-    this.obs.subscribe(
-      (dto) => {
+    this.onWebSocketMessage = this.serviceBus.onIncomingWebSocketMessage.subscribe(
+      (dto: WebSocketsDto) => {
+        if (dto.cid !== this.cid) return; // message not our component 
         if (dto.theme === WebSocketsTheme.SendBackData) {
           this.messages.push(dto.content);
         }
       }
     );
+  }
+
+  ngOnDestroy(): void {
+    this.onWebSocketMessage.unsubscribe();
   }
 
   sendMessageToServer() {
@@ -51,7 +54,7 @@ export class WebsocketsTestComponent implements OnInit {
       theme: WebSocketsTheme.SendBackData,
       content: this.message
     };
-    this.wss.send(dto);
+    this.serviceBus.onOutgoingWebSocketMessage.emit(dto);
   }
 
 }
