@@ -7,11 +7,11 @@
         "experimentalDecorators": true,
         "noImplicitAny": true,
         "removeComments": true,
-        "sourceMap": true,
+        "sourceMap": false,
         "target": "ES2015",
         "module": "CommonJS",
         "outDir": "./dist",
-        "listFiles": false
+        "listFiles": false,
     },
     "exclude": ["node_modules", "**/*spec.ts"]
 }
