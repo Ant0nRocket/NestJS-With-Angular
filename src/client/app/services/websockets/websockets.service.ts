@@ -22,11 +22,14 @@ export class WebSocketsService {
     private serviceBus: ServiceBus,
   ) {
     console.log('WebSockets service created');
+    let wsProtocolPrefix = 'ws://';
+    if (location.protocol === 'https://')
+      wsProtocolPrefix = 'wss://';
 
-    this.url = 'ws://' + location.host;
+    this.url = wsProtocolPrefix + location.host;
     if (!environment.production) {
       // in dev mode backend usualy on 3000 port, so let's change it
-      this.url = this.url.replace('4200', `${apiConfig.apiPort}`);
+      this.url = this.url.replace('4200', '3000');
     }
 
     this.serviceBus.onAuthSuccess.subscribe(() => {
