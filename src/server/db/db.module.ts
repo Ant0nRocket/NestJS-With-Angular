@@ -7,7 +7,6 @@ import { apiConfig } from '../../shared/api.config';
 @Module({
     imports: [
         MongooseModule.forRoot(apiConfig.dbUri, {
-            connectionName: apiConfig.dbConnectionName,
             useNewUrlParser: true,
             useUnifiedTopology: true,
             useCreateIndex: true

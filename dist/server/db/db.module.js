@@ -17,7 +17,6 @@ DbModule = __decorate([
     common_1.Module({
         imports: [
             mongoose_1.MongooseModule.forRoot(api_config_1.apiConfig.dbUri, {
-                connectionName: api_config_1.apiConfig.dbConnectionName,
                 useNewUrlParser: true,
                 useUnifiedTopology: true,
                 useCreateIndex: true

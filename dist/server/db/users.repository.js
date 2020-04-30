@@ -25,7 +25,6 @@ const common_1 = require("@nestjs/common");
 const mongodb_1 = require("mongodb");
 const mongoose_1 = require("mongoose");
 const mongoose_2 = require("@nestjs/mongoose");
-const api_config_1 = require("../../shared/api.config");
 let UsersRepository = class UsersRepository {
     constructor(mongo) {
         this.mongo = mongo;
@@ -68,7 +67,7 @@ let UsersRepository = class UsersRepository {
 };
 UsersRepository = __decorate([
     common_1.Injectable(),
-    __param(0, mongoose_2.InjectConnection(api_config_1.apiConfig.dbConnectionName)),
+    __param(0, mongoose_2.InjectConnection()),
     __metadata("design:paramtypes", [mongoose_1.Connection])
 ], UsersRepository);
 exports.UsersRepository = UsersRepository;

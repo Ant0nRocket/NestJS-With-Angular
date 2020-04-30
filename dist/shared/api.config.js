@@ -1,14 +1,11 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const appName = 'nest_with_angular';
 const urlApiBase = '/api';
-const defaultDbName = appName;
 const defaultPort = 3000;
-const defaultDbUri = 'mongodb://localhost/' + defaultDbName;
+const defaultDbUri = 'mongodb://localhost/nest_with_angular';
 exports.apiConfig = {
     apiPort: defaultPort,
     dbUri: defaultDbUri,
-    dbConnectionName: appName,
     urlSignup: urlApiBase + '/signup',
     urlLogin: urlApiBase + '/login',
     urlTokenCheck: urlApiBase + '/check-token',

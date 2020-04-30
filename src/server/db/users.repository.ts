@@ -11,7 +11,7 @@ export class UsersRepository {
 
     private users: Collection<User>;
 
-    constructor(@InjectConnection(apiConfig.dbConnectionName) private readonly mongo: Connection) {
+    constructor(@InjectConnection() private readonly mongo: Connection) {
         this.initUsersCollection();
     }
 
