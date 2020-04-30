@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { UsersRepository } from '../db/users.repository';
 import { AuthCredentialsDto } from '../../shared/auth/auth-credentials.dto';
 import { User } from '../../shared/models/user';
@@ -9,6 +9,9 @@ import { JwtPayload } from '../../shared/auth/jwt-payload';
 
 @Injectable()
 export class AuthService {
+
+    private logger: Logger = new Logger('AuthService');
+
     constructor(
         private usersRepository: UsersRepository
     ) { }
@@ -56,5 +59,39 @@ export class AuthService {
             return tokenDto;
         }
         return null;
+    }
+
+
+    /** Checks auth token (is it valid, not expired, user exists, etc.) */
+    async isTokenValid(rawToken: string, tokenValidCallback?: (user: User) => void): Promise<boolean> {
+        const token = jwt.decode(rawToken);
+        if (!token) {
+            this.logger.error(`Empty auth token provided`);
+            return false;
+        }
+
+        const { id } = token as JwtPayload;
+        if (!id) {
+            this.logger.error(`Auth token invalid: no user ID found`);
+            return false;
+        }
+
+        const user = await this.usersRepository.getUserBy({ _id: id });
+        if (!user) {
+            this.logger.error(`No user found with ID ${id}`);
+            return false;
+        }
+
+        // User password hash is a sign key for jwt, let's validate
+        try {
+            jwt.verify(rawToken, user.password);
+            tokenValidCallback(user);
+            this.logger.log(`Valid auth token provided. Saving it to cache.`);
+        } catch (err) {
+            this.logger.error(`Invalid auth token provided. Removing it from cache (if exists).`);
+            return false;
+        }
+
+        return true;
     }
 }

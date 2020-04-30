@@ -10,6 +10,7 @@ export const apiConfig = {
     dbConnectionName: appName,
     urlSignup: urlApiBase + '/signup',
     urlLogin: urlApiBase + '/login',
+    urlTokenCheck: urlApiBase + '/check-token',
     minUsernameLen: 1,
     maxUsernameLen: 30,
     minPasswordLen: 1,

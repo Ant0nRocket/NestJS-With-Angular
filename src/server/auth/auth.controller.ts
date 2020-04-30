@@ -37,4 +37,14 @@ export class AuthController {
 
         return authTokenDto;
     }
+
+
+    @Post(apiConfig.urlTokenCheck)
+    async checkToken(@Body() authTokenDto: AuthTokenDto): Promise<AuthTokenDto> {
+        if (this.authService.isTokenValid(authTokenDto.token)) {
+            return authTokenDto;
+        } else {
+            throw new UnauthorizedException();
+        }
+    }
 }

@@ -43,10 +43,12 @@ export class AuthService {
   ) {
     console.log('Auth service created');
 
+    this.checkToken({ token: this.authToken }); // starts check request. On OK magic appears :)
+
     serviceBus.onIncomingWebSocketMessage.subscribe((dto: WebSocketsDto) => {
       if (dto.theme === WebSocketsTheme.ClientConnected) {
         dto.theme = WebSocketsTheme.AuthenticateWithToken;
-        dto.content = this._authToken;
+        dto.content = this.authToken;
         this.serviceBus.onOutgoingWebSocketMessage.emit(dto);
       }
     });
@@ -55,8 +57,8 @@ export class AuthService {
   signUp(authCredentials: AuthCredentialsDto) {
     this.http.post<AuthTokenDto>(apiConfig.urlSignup, authCredentials).subscribe(
       // remember that authToken setter will call appropriate subject on bus
-      (ok) => {
-        this.authToken = ok.token;
+      (dto) => {
+        this.authToken = dto.token;
       },
       (err) => {
         this.authToken = null;
@@ -72,8 +74,19 @@ export class AuthService {
 
   login(authCredentials: AuthCredentialsDto) {
     this.http.post<AuthTokenDto>(apiConfig.urlLogin, authCredentials).subscribe(
-      (ok) => {
-        this.authToken = ok.token;
+      (dto) => {
+        this.authToken = dto.token;
+      },
+      () => {
+        this.authToken = null;
+      }
+    );
+  }
+
+  checkToken(authTokenDto: AuthTokenDto) {
+    this.http.post(apiConfig.urlTokenCheck, authTokenDto).subscribe(
+      (dto: AuthTokenDto) => {
+        this.authToken = dto.token;
       },
       () => {
         this.authToken = null;

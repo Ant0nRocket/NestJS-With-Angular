@@ -13,13 +13,15 @@ import { WebSocketsTheme } from '../shared/websockets/websockets-theme.enum';
 import { UsersRepository } from './db/users.repository';
 import { apiConfig } from '../shared/api.config';
 import { JwtPayload } from '../shared/auth/jwt-payload';
+import { AuthService } from './auth/auth.service';
+import { User } from '../shared/models/user';
 
 @Injectable()
 @WebSocketGateway()
 export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
 
   constructor(
-    private usersRepository: UsersRepository
+    private authService: AuthService,
   ) { }
 
   @WebSocketServer()
@@ -109,33 +111,16 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
    * If token is invalid client will be automatically disconnected.
    */
   async handleClientAuthentication(client: any, dto: WebSocketsDto) {
-    const token = jwt.decode(dto.content);
-    if (!token) {
-      this.logger.error(`Client ${client.id} provided invalid auth token`);
-      return;
-    }
+    const tokenIsValid = await this.authService
+      .isTokenValid(dto.content, (user: User) => {
+        client.userId = user._id;
+      });
 
-    const { id } = token as JwtPayload;
-    if (!id) {
-      this.logger.error(`Client ${client.id} provided token with no id`);
-      return;
-    }
-
-    const user = await this.usersRepository.getUserBy({ _id: id });
-    if (!user) {
-      this.logger.error(`No user with id ${id} found`);
-      return;
-    }
-
-    // User password hash is a sign key for jwt, let's validate
-    try {
-      jwt.verify(dto.content as string, user.password);
-      client.userId = user._id;
+    if (tokenIsValid) {
       clearTimeout(client.disconnectTimer);
-
       this.logger.log(`Client ${client.id} authorized. User is ${client.userId}`);
-    } catch (err) {
-      this.logger.error(`Token verification error (client ${client.id}): ${err}`)
+    } else {
+      this.logger.error(`Token of client ${client.id} is invalid`);
     }
   }
 }
