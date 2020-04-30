@@ -7,12 +7,9 @@ import {
 } from '@nestjs/websockets';
 import { Logger, Injectable } from '@nestjs/common';
 import * as shortid from 'shortid';
-import * as jwt from 'jsonwebtoken';
 import { WebSocketsDto } from '../shared/websockets/websockets.dto';
 import { WebSocketsTheme } from '../shared/websockets/websockets-theme.enum';
-import { UsersRepository } from './db/users.repository';
 import { apiConfig } from '../shared/api.config';
-import { JwtPayload } from '../shared/auth/jwt-payload';
 import { AuthService } from './auth/auth.service';
 import { User } from '../shared/models/user';
 
