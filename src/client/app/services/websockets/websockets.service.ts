@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { WebSocketsDto } from '../../../../shared/websockets/websockets.dto';
 import { environment } from '../../../environments/environment';
-import { apiConfig } from '../../../../shared/api.config';
 import { ServiceBus } from '../service-bus.service';
 import { ServicesModule } from '../services.module';
 
@@ -13,6 +12,8 @@ export class WebSocketsService {
 
   private ws: WebSocket;
   private url: string;
+
+  private pingPongInterval: number;
 
   private outgoingMessagesSub: Subscription;
 
@@ -42,6 +43,13 @@ export class WebSocketsService {
 
     this.serviceBus.onWebSocketConnected.subscribe((value: boolean) => {
       this.ready = value;
+      if (value) { // connected
+        this.pingPongInterval = window.setInterval(() => {
+          this.ws?.send('');
+        }, 23456);
+      } else {
+        window.clearInterval(this.pingPongInterval);
+      }
     });
   }
 

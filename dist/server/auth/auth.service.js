@@ -26,6 +26,7 @@ let AuthService = class AuthService {
     constructor(usersRepository) {
         this.usersRepository = usersRepository;
         this.logger = new common_1.Logger('AuthService');
+        this.knownAuthTokens = new Set();
     }
     signup(credentials) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -69,9 +70,10 @@ let AuthService = class AuthService {
     }
     isTokenValid(rawToken, tokenValidCallback) {
         return __awaiter(this, void 0, void 0, function* () {
+            if (this.knownAuthTokens.has(rawToken))
+                return true;
             const token = jwt.decode(rawToken);
             if (!token) {
-                this.logger.error(`Empty auth token provided`);
                 return false;
             }
             const { id } = token;
@@ -87,10 +89,11 @@ let AuthService = class AuthService {
             try {
                 jwt.verify(rawToken, user.password);
                 tokenValidCallback(user);
-                this.logger.log(`Valid auth token provided. Saving it to cache.`);
+                this.knownAuthTokens.add(rawToken);
             }
             catch (err) {
                 this.logger.error(`Invalid auth token provided. Removing it from cache (if exists).`);
+                this.knownAuthTokens.delete(rawToken);
                 return false;
             }
             return true;
@@ -102,3 +105,4 @@ AuthService = __decorate([
     __metadata("design:paramtypes", [users_repository_1.UsersRepository])
 ], AuthService);
 exports.AuthService = AuthService;
+//# sourceMappingURL=auth.service.js.map

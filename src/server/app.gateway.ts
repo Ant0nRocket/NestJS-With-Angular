@@ -38,8 +38,12 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
   handleConnection(client: any, ...args: any[]) {
     client.id = shortid.generate(); // don't used now. Just an ID of socket.
     (client as WebSocket).onmessage = (ev) => {
-      // ev.target is a client socket, and ev.data is a message from client
-      this.handleDto(ev.target as WebSocket, JSON.parse(ev.data));
+      if (ev.data === '') { // empty requests is a ping requests
+        client.send('');    // let's pong then :)
+      } else {
+        // ev.target is a client socket, and ev.data is a message from client
+        this.handleDto(ev.target as WebSocket, JSON.parse(ev.data));
+      }
     };
 
     this.logger.log(`Client connected: ${client.id}`);

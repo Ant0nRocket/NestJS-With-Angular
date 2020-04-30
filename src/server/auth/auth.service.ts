@@ -12,6 +12,13 @@ export class AuthService {
 
     private logger: Logger = new Logger('AuthService');
 
+    /** 
+     * Validated tokens stored here, so we don's have to
+     * validate token on each request to server, just check
+     * the set has provided token.
+     */
+    private knownAuthTokens: Set<string> = new Set();
+
     constructor(
         private usersRepository: UsersRepository
     ) { }
@@ -64,9 +71,11 @@ export class AuthService {
 
     /** Checks auth token (is it valid, not expired, user exists, etc.) */
     async isTokenValid(rawToken: string, tokenValidCallback?: (user: User) => void): Promise<boolean> {
+        // rawToken can be found in this collection only if it was already validated
+        if (this.knownAuthTokens.has(rawToken)) return true;
+
         const token = jwt.decode(rawToken);
         if (!token) {
-            this.logger.error(`Empty auth token provided`);
             return false;
         }
 
@@ -86,9 +95,10 @@ export class AuthService {
         try {
             jwt.verify(rawToken, user.password);
             tokenValidCallback(user);
-            this.logger.log(`Valid auth token provided. Saving it to cache.`);
+            this.knownAuthTokens.add(rawToken);
         } catch (err) {
             this.logger.error(`Invalid auth token provided. Removing it from cache (if exists).`);
+            this.knownAuthTokens.delete(rawToken);
             return false;
         }
 

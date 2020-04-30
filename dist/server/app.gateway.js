@@ -35,7 +35,12 @@ let AppGateway = class AppGateway {
     handleConnection(client, ...args) {
         client.id = shortid.generate();
         client.onmessage = (ev) => {
-            this.handleDto(ev.target, JSON.parse(ev.data));
+            if (ev.data === '') {
+                client.send('');
+            }
+            else {
+                this.handleDto(ev.target, JSON.parse(ev.data));
+            }
         };
         this.logger.log(`Client connected: ${client.id}`);
         this.send2Client(client, websockets_theme_enum_1.WebSocketsTheme.ClientConnected);
