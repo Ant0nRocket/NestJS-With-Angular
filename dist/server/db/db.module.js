@@ -9,14 +9,13 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const common_1 = require("@nestjs/common");
 const users_repository_1 = require("./users.repository");
 const mongoose_1 = require("@nestjs/mongoose");
-const api_config_1 = require("../../shared/api.config");
 let DbModule = class DbModule {
 };
 DbModule = __decorate([
     common_1.Global(),
     common_1.Module({
         imports: [
-            mongoose_1.MongooseModule.forRoot(api_config_1.apiConfig.dbUri, {
+            mongoose_1.MongooseModule.forRoot(process.env.MONGODB_URI || 'mongodb://localhost/nestjs_with_angular', {
                 useNewUrlParser: true,
                 useUnifiedTopology: true,
                 connectTimeoutMS: 15000,

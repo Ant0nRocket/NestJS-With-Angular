@@ -12,15 +12,17 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const core_1 = require("@nestjs/core");
 const platform_ws_1 = require("@nestjs/platform-ws");
 const app_module_1 = require("./app.module");
-const api_config_1 = require("../shared/api.config");
-api_config_1.setApiPort(process.env.PORT);
-api_config_1.setDbUri(process.env.MONGODB_URI);
+const common_1 = require("@nestjs/common");
+const logger = new common_1.Logger('App');
+logger.log(`process.env.PORT = ${process.env.PORT}`);
+logger.log(`process.env.MONGODB_URI = ${process.env.MONGODB_URI}`);
 function bootstrap() {
     return __awaiter(this, void 0, void 0, function* () {
         const app = yield core_1.NestFactory.create(app_module_1.AppModule);
         app.enableCors();
         app.useWebSocketAdapter(new platform_ws_1.WsAdapter(app));
-        yield app.listen(api_config_1.apiConfig.apiPort);
+        yield app.listen(process.env.PORT || 3000);
     });
 }
 bootstrap();
+//# sourceMappingURL=main.js.map

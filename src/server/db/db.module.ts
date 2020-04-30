@@ -1,17 +1,18 @@
 import { Module, Global } from '@nestjs/common';
 import { UsersRepository } from './users.repository';
 import { MongooseModule } from '@nestjs/mongoose';
-import { apiConfig } from '../../shared/api.config';
 
 @Global()
 @Module({
     imports: [
-        MongooseModule.forRoot(apiConfig.dbUri, {
-            useNewUrlParser: true,
-            useUnifiedTopology: true,
-            connectTimeoutMS: 15000,
-            useCreateIndex: true
-        }),
+        MongooseModule.forRoot(
+            process.env.MONGODB_URI || 'mongodb://localhost/nestjs_with_angular',
+            {
+                useNewUrlParser: true,
+                useUnifiedTopology: true,
+                connectTimeoutMS: 15000,
+                useCreateIndex: true
+            }),
     ],
     providers: [
         UsersRepository,

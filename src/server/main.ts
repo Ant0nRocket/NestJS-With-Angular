@@ -1,10 +1,12 @@
 import { NestFactory } from '@nestjs/core';
 import { WsAdapter } from '@nestjs/platform-ws';
 import { AppModule } from './app.module';
-import { apiConfig, setApiPort, setDbUri } from '../shared/api.config';
+import { Logger } from '@nestjs/common';
 
-setApiPort(process.env.PORT);
-setDbUri(process.env.MONGODB_URI);
+// Logging of environment variables could help with mLab errors %)
+const logger: Logger = new Logger('App');
+logger.log(`process.env.PORT = ${process.env.PORT}`);
+logger.log(`process.env.MONGODB_URI = ${process.env.MONGODB_URI}`);
 
 async function bootstrap() {
     const app = await NestFactory.create(AppModule);
@@ -18,7 +20,7 @@ async function bootstrap() {
     // library. IMO, 'ws' library (and build-in ws functionality of browsers)
     // are better.
     app.useWebSocketAdapter(new WsAdapter(app));
-    await app.listen(apiConfig.apiPort);
+    await app.listen(process.env.PORT || 3000);
 }
 
 bootstrap();
