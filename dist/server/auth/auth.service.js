@@ -26,7 +26,6 @@ let AuthService = class AuthService {
     constructor(usersRepository) {
         this.usersRepository = usersRepository;
         this.logger = new common_1.Logger('AuthService');
-        this.knownAuthTokens = new Set();
     }
     signup(credentials) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -70,8 +69,6 @@ let AuthService = class AuthService {
     }
     isTokenValid(rawToken, tokenValidCallback) {
         return __awaiter(this, void 0, void 0, function* () {
-            if (this.knownAuthTokens.has(rawToken))
-                return true;
             const token = jwt.decode(rawToken);
             if (!token) {
                 return false;
@@ -89,11 +86,9 @@ let AuthService = class AuthService {
             try {
                 jwt.verify(rawToken, user.password);
                 tokenValidCallback(user);
-                this.knownAuthTokens.add(rawToken);
             }
             catch (err) {
-                this.logger.error(`Invalid auth token provided. Removing it from cache (if exists).`);
-                this.knownAuthTokens.delete(rawToken);
+                this.logger.error(`Invalid auth token provided`);
                 return false;
             }
             return true;
