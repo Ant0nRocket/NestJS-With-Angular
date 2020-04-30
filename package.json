@@ -4,6 +4,7 @@
 	"description": "Basic toolkit for Angular and NestJS development",
 	"author": "Ant0nRocket",
 	"scripts": {
+		"start": "node ./dist/server/main.js",
 		"build:all": "nest build && ng build",
 		"build:server": "nest build",
 		"build:client": "ng build",
