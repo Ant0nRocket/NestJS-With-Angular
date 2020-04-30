@@ -22,7 +22,6 @@ export class WebSocketsService {
   constructor(
     private serviceBus: ServiceBus,
   ) {
-    console.log('WebSockets service created');
     let wsProtocolPrefix = 'ws://';
     if (location.protocol === 'https:')
       wsProtocolPrefix = 'wss://';
@@ -41,6 +40,7 @@ export class WebSocketsService {
       this.ws?.close();
     });
 
+    // Inside there is a ping-pong implementation, nothing scary
     this.serviceBus.onWebSocketConnected.subscribe((value: boolean) => {
       this.ready = value;
       if (value) { // connected
@@ -67,6 +67,7 @@ export class WebSocketsService {
     }
 
     this.ws.onmessage = (ev) => { // received message
+      if (ev.data === '') return; // pong signal, skip
       const data: WebSocketsDto = JSON.parse(ev.data);
       this.serviceBus.onIncomingWebSocketMessage.next(data);
     }

@@ -41,7 +41,6 @@ export class AuthService {
     private serviceBus: ServiceBus,
     private http: HttpClient
   ) {
-    console.log('Auth service created');
 
     this.checkToken({ token: this.authToken }); // starts check request. On OK magic appears :)
 
