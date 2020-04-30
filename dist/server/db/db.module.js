@@ -18,6 +18,8 @@ DbModule = __decorate([
         imports: [
             mongoose_1.MongooseModule.forRoot(api_config_1.apiConfig.dbUri, {
                 useNewUrlParser: true,
+                useUnifiedTopology: true,
+                connectTimeoutMS: 15000,
                 useCreateIndex: true
             }),
         ],
@@ -30,3 +32,4 @@ DbModule = __decorate([
     })
 ], DbModule);
 exports.DbModule = DbModule;
+//# sourceMappingURL=db.module.js.map
