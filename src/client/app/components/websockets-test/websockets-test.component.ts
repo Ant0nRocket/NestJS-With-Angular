@@ -4,7 +4,7 @@ import { Subscription } from 'rxjs';
 import { WebSocketsTheme } from '../../../../shared/websockets/websockets-theme.enum';
 import { WebSocketsDto } from '../../../../shared/websockets/websockets.dto';
 import { ServiceBus } from '../../services/service-bus.service';
-import { AuthService } from '../../services/auth/auth.service';
+import { WebSocketsService } from '../../services/websockets/websockets.service';
 
 @Component({
   selector: 'app-websockets-test',
@@ -17,6 +17,10 @@ export class WebsocketsTestComponent implements OnInit, OnDestroy {
 
   message: string = '';
 
+  get messageReady(): boolean {
+    return this.message.trim().length > 0;
+  }
+
   messages: string[] = [
     'Build in message #1',
     'Build in message #2'
@@ -24,17 +28,18 @@ export class WebsocketsTestComponent implements OnInit, OnDestroy {
 
   private cid: string;
 
-  private onWebSocketMessage: Subscription;
+  private onWebSocketMessage$: Subscription;
 
   constructor(
     private serviceBus: ServiceBus,
+    public webSocketsService: WebSocketsService,
   ) {
 
   }
 
   ngOnInit(): void {
     this.cid = shortid.generate();
-    this.onWebSocketMessage = this.serviceBus.onIncomingWebSocketMessage.subscribe(
+    this.onWebSocketMessage$ = this.serviceBus.onIncomingWebSocketMessage.subscribe(
       (dto: WebSocketsDto) => {
         if (dto.cid !== this.cid) return; // message not our component 
         if (dto.theme === WebSocketsTheme.SendBackData) {
@@ -45,7 +50,7 @@ export class WebsocketsTestComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.onWebSocketMessage.unsubscribe();
+    this.onWebSocketMessage$.unsubscribe();
   }
 
   sendMessageToServer() {

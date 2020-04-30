@@ -7,7 +7,7 @@
         </div>
         <input type="text" class="form-control" [(ngModel)]="message">
         <button class="btn btn-success" (click)="sendMessageToServer()"
-            [disabled]="message.trim().length === 0">Send</button>
+            [disabled]="!webSocketsService.ready || !messageReady">Send</button>
     </div>
 
 

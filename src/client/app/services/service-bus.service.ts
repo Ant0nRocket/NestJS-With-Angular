@@ -41,8 +41,8 @@ export class ServiceBus {
   onOutgoingWebSocketMessage: EventEmitter<WebSocketsDto> = new EventEmitter();
 
 
-  constructor(
-  ) {
-    console.log('Bus created');
-  }
+  /** If true - websocket connection, false - disconnected */
+  onWebSocketConnected: EventEmitter<boolean> = new EventEmitter();
+
+  constructor() { }
 }

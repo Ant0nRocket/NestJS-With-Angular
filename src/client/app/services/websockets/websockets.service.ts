@@ -16,6 +16,8 @@ export class WebSocketsService {
 
   private outgoingMessagesSub: Subscription;
 
+  public ready = false;
+
   constructor(
     private serviceBus: ServiceBus,
   ) {
@@ -34,14 +36,18 @@ export class WebSocketsService {
     this.serviceBus.onAuthFailed.subscribe(() => {
       this.ws?.close();
     });
+
+    this.serviceBus.onWebSocketConnected.subscribe((value: boolean) => {
+      this.ready = value;
+    });
   }
 
-
-  public connect() {
+  private connect() {
     this.ws?.close();
     this.ws = new WebSocket(this.url);
 
     this.ws.onopen = (event) => {
+      this.serviceBus.onWebSocketConnected.emit(true);
       this.outgoingMessagesSub = this.serviceBus
         .onOutgoingWebSocketMessage
         .subscribe((m: WebSocketsDto) => {
@@ -56,6 +62,7 @@ export class WebSocketsService {
 
     this.ws.onerror = () => {
       this.outgoingMessagesSub.unsubscribe();
+      this.serviceBus.onWebSocketConnected.emit(false);
       this.ws.close();
       // let's try reconnect every 5 sec.
       setTimeout(() => { this.reconnect(); }, 5000);
@@ -64,6 +71,7 @@ export class WebSocketsService {
 
     this.ws.onclose = () => {
       this.outgoingMessagesSub.unsubscribe();
+      this.serviceBus.onWebSocketConnected.emit(false);
       console.log(`WebSocket connection to ${this.url} was closed.`)
     }
   }

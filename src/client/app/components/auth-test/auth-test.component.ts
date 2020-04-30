@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { AuthService } from '../../services/auth/auth.service';
 import { SignupCredentials } from './signup-credentials';
-import { Subscription, SubscriptionLike } from 'rxjs';
+import { Subscription } from 'rxjs';
 import { ServiceBus } from '../../services/service-bus.service';
 
 @Component({
@@ -38,8 +38,8 @@ export class AuthTestComponent implements OnInit, OnDestroy {
   authFailed$: Subscription;
 
   constructor(
-    public authService: AuthService,
     private serviceBus: ServiceBus,
+    public authService: AuthService,
   ) { }
 
   ngOnInit(): void {
