@@ -23,7 +23,7 @@ export class WebSocketsService {
   ) {
     console.log('WebSockets service created');
     let wsProtocolPrefix = 'ws://';
-    if (location.protocol === 'https://')
+    if (location.protocol === 'https:')
       wsProtocolPrefix = 'wss://';
 
     this.url = wsProtocolPrefix + location.host;
