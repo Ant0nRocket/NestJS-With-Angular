@@ -22,7 +22,7 @@ export class WebSocketsService {
    * if there were no packages transmited. 
    * Below there is Ping-Pong code which fire every 25000 ms.
    */
-  private pingPongInterval = 1000;
+  private pingPongInterval = 25000;
 
   /** 
    * If WebSocket closed because of some error it will

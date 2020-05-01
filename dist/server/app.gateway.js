@@ -35,11 +35,14 @@ let AppGateway = class AppGateway {
     handleConnection(client, ...args) {
         client.id = shortid.generate();
         client.onmessage = (ev) => {
-            if (ev.data === '') {
-                client.send('');
-            }
-            else {
-                this.handleDto(ev.target, JSON.parse(ev.data));
+            if (ev.data) {
+                try {
+                    const dto = JSON.parse(ev.data);
+                    this.handleDto(client, dto);
+                }
+                catch (_a) {
+                    client.send('');
+                }
             }
         };
         this.logger.log(`Client connected: ${client.id}`);

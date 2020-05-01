@@ -30,30 +30,39 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
     this.logger.log('Websocket started.');
   }
 
+  // isIncomingMessageValid(message: any): boolean {
+  //   if (!message) return false;
+  //   if (message === 'undefined' || message === 'null') return false;
+  //   return true;
+  // }
+
   /**
    * Moment where new client just connected
    * @param client client end-point (WebSocket)
    * @param args connection arguments (headers, etc.)
    */
-  handleConnection(client: any, ...args: any[]) {
-    client.id = shortid.generate(); // don't used now. Just an ID of socket.
-    (client as WebSocket).onmessage = (ev) => {
-      if (ev.data === '') { // empty requests is a ping requests
-        client.send('');    // let's pong then :)
-      } else {
-        // ev.target is a client socket, and ev.data is a message from client
-        this.handleDto(ev.target as WebSocket, JSON.parse(ev.data));
+  handleConnection(client: WebSocket, ...args: any[]) {
+    (client as any).id = shortid.generate(); // don't used now. Just an ID of socket.
+    client.onmessage = (ev) => {
+      // ev.target is a client socket, and ev.data is a message from client
+      if (ev.data) {
+        try {
+          const dto = JSON.parse(ev.data);
+          this.handleDto(client, dto);
+        } catch {
+          client.send('');
+        }
       }
-    };
+    }
 
-    this.logger.log(`Client connected: ${client.id}`);
+    this.logger.log(`Client connected: ${(client as any).id}`);
 
     // Notify client that it's connected...
     this.send2Client(client as WebSocket, WebSocketsTheme.ClientConnected);
 
     // ... and start timer that wait apiConfig.socketAuthDelay ms for client
     // to provide auth token. If no token - client will be disconnected
-    client.disconnectTimer = setTimeout(() => {
+    (client as any).disconnectTimer = setTimeout(() => {
       this.send2Client(client, WebSocketsTheme.Unauthorized);
       (client as WebSocket).close();
     }, apiConfig.socketAuthDelay);
