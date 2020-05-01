@@ -1,10 +1,10 @@
 import { Component, OnInit, OnDestroy, Input } from '@angular/core';
 import * as shortid from 'shortid';
 import { Subscription } from 'rxjs';
+
 import { WebSocketsTheme } from '../../../../shared/websockets/websockets-theme.enum';
 import { WebSocketsDto } from '../../../../shared/websockets/websockets.dto';
 import { ServiceBus } from '../../services/service-bus.service';
-import { WebSocketsService } from '../../services/websockets/websockets.service';
 
 @Component({
   selector: 'app-websockets-test',
@@ -30,16 +30,11 @@ export class WebsocketsTestComponent implements OnInit, OnDestroy {
 
   private onWebSocketMessage$: Subscription;
 
-  constructor(
-    private serviceBus: ServiceBus,
-    public webSocketsService: WebSocketsService,
-  ) {
-
-  }
+  constructor(public serviceBus: ServiceBus) { }
 
   ngOnInit(): void {
     this.cid = shortid.generate();
-    this.onWebSocketMessage$ = this.serviceBus.onIncomingWebSocketMessage.subscribe(
+    this.onWebSocketMessage$ = this.serviceBus.onIncomingWebSocketDto.subscribe(
       (dto: WebSocketsDto) => {
         if (dto.cid !== this.cid) return; // message not our component 
         if (dto.theme === WebSocketsTheme.SendBackData) {
@@ -59,7 +54,7 @@ export class WebsocketsTestComponent implements OnInit, OnDestroy {
       theme: WebSocketsTheme.SendBackData,
       content: this.message
     };
-    this.serviceBus.onOutgoingWebSocketMessage.emit(dto);
+    this.serviceBus.webSocketsService.send(dto);
   }
 
 }

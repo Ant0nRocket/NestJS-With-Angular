@@ -14,7 +14,7 @@ import { AuthService } from './auth/auth.service';
 import { User } from '../shared/models/user';
 
 @Injectable()
-@WebSocketGateway()
+@WebSocketGateway(null, { path: apiConfig.urlWebSocket })
 export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
 
   constructor(

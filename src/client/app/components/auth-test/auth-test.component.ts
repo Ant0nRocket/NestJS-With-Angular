@@ -1,8 +1,8 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { AuthService } from '../../services/auth/auth.service';
-import { SignupCredentials } from './signup-credentials';
 import { Subscription } from 'rxjs';
+
 import { ServiceBus } from '../../services/service-bus.service';
+import { SignupCredentials } from './signup-credentials';
 
 @Component({
   selector: 'app-auth-test',
@@ -34,26 +34,18 @@ export class AuthTestComponent implements OnInit, OnDestroy {
 
   userIdTypeText = 'User ID (name, email or phone)';
 
-  signUpError$: Subscription;
-  authFailed$: Subscription;
+  authErrorSub: Subscription;
 
-  constructor(
-    private serviceBus: ServiceBus,
-    public authService: AuthService,
-  ) { }
+  constructor(public serviceBus: ServiceBus) { }
 
   ngOnInit(): void {
-    this.signUpError$ = this.serviceBus.onSignUpError.subscribe(
-      (error: string) => { this.errors.push(error) }
+    this.authErrorSub = this.serviceBus.authService.onAuthError$.subscribe(
+      (err: string) => this.errors.push(err)
     );
   }
 
   ngOnDestroy(): void {
-    this.signUpError$.unsubscribe();
-  }
-
-  alert(m: any) {
-    window.alert(m);
+    this.authErrorSub.unsubscribe();
   }
 
   onUserIdKeyPressed(event: Event) {
@@ -68,6 +60,7 @@ export class AuthTestComponent implements OnInit, OnDestroy {
 
   /** Fills this.errors array if any errors */
   checkModelErrors() {
+
     this.errors = [];
 
     if (this.credentials.isEmpty()) return;
@@ -85,25 +78,17 @@ export class AuthTestComponent implements OnInit, OnDestroy {
 
   submit() {
     this.checkModelErrors();
-
     if (this.hasErrors) return;
 
-    this.authFailed$ = this.serviceBus.onAuthFailed.subscribe(
-      () => {
-        this.errors.push('Wrong user id or password');
-        this.authFailed$.unsubscribe();
-      }
-    );
-
     if (this.mode === 'sign up')
-      this.authService.signUp(this.credentials);
+      this.serviceBus.authService.signUp(this.credentials);
 
     if (this.mode === 'log in')
-      this.authService.login(this.credentials);
+      this.serviceBus.authService.login(this.credentials);
   }
 
   logout() {
-    this.authService.logout();
+    this.serviceBus.authService.logout();
     this.credentials = new SignupCredentials();
     this.errors = [];
   }

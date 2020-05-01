@@ -102,8 +102,7 @@ __decorate([
 ], AppGateway.prototype, "server", void 0);
 AppGateway = __decorate([
     common_1.Injectable(),
-    websockets_1.WebSocketGateway(),
+    websockets_1.WebSocketGateway(null, { path: api_config_1.apiConfig.urlWebSocket }),
     __metadata("design:paramtypes", [auth_service_1.AuthService])
 ], AppGateway);
 exports.AppGateway = AppGateway;
-//# sourceMappingURL=app.gateway.js.map

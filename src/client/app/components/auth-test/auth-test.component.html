@@ -1,9 +1,9 @@
-<div class="alert alert-info el" *ngIf="authService.authToken">
+<div class="alert alert-info el" *ngIf="serviceBus.authService.authToken">
     <p>You are logged in (username will be provided later)</p>
     <button class="btn btn-danger" (click)="logout()">LOG OUT</button>
 </div>
 
-<div class="alert alert-info el" *ngIf="!authService.authToken">
+<div class="alert alert-info el" *ngIf="!serviceBus.authService.authToken">
 
     <a href="#" (click)="mode = 'log in'" *ngIf="mode === 'sign up'">
         <strong>

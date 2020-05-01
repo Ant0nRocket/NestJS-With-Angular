@@ -1,6 +1,7 @@
 const urlApiBase = '/api';
 
 export const apiConfig = {
+    urlWebSocket: '/socket',
     urlSignup: urlApiBase + '/signup',
     urlLogin: urlApiBase + '/login',
     urlTokenCheck: urlApiBase + '/check-token',

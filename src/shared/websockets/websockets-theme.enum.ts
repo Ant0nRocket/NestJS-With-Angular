@@ -1,7 +1,4 @@
 export enum WebSocketsTheme {
-    SendBackData,
-    HowManyClientsConnected,
-
     /** 
      * Server sends this when socket connection open. 
      * Client should respond with valid auth token or
@@ -25,4 +22,14 @@ export enum WebSocketsTheme {
 
     /** Use it when server didn't understand command. */
     UnknownCommand,
+
+    /** For DTO filtering */
+    EndOfServiceCommands,
+
+    ///////////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////
+
+    /** Server should return DTO as it is */
+    SendBackData,
 }

@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const urlApiBase = '/api';
 exports.apiConfig = {
+    urlWebSocket: '/socket',
     urlSignup: urlApiBase + '/signup',
     urlLogin: urlApiBase + '/login',
     urlTokenCheck: urlApiBase + '/check-token',
@@ -13,4 +14,3 @@ exports.apiConfig = {
     passwordRegex: /^[A-Za-zА-Яа-я0-9\s.\-`~!@#$%^&*()_=+|?]+$/,
     socketAuthDelay: 5000,
 };
-//# sourceMappingURL=api.config.js.map

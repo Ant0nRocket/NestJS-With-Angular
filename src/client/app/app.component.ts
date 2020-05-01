@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { ServicesBootstrap } from './services/services.bootstrap';
+import { ServiceBus } from './services/service-bus.service';
 
 @Component({
   selector: 'app-root',
@@ -8,7 +8,7 @@ import { ServicesBootstrap } from './services/services.bootstrap';
 })
 export class AppComponent {
   constructor(
-    private servicesBootstrap: ServicesBootstrap
+    private servicesBus: ServiceBus
   ) {
 
   }
