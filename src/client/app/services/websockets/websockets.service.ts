@@ -22,16 +22,20 @@ export class WebSocketsService {
    * if there were no packages transmited. 
    * Below there is Ping-Pong code which fire every 25000 ms.
    */
-  private pingPongInterval = 25000;
+  private pingPongInterval = 20000;
+
+
+  /** 
+   * Set to true if you need to start reconnection procedure
+   * on error or close
+   */
+  private reconnectOnError = true;
 
   /** 
    * If WebSocket closed because of some error it will
    * try to reconnect every 5 seconds
    */
   private reconnectionOnErrorInterval = 5000;
-
-  /** Just a subscription on outgoing messages */
-  private outgoingMessagesSub: Subscription;
 
   public get ready(): boolean {
     return this.ws?.readyState === WebSocket.OPEN;
@@ -61,6 +65,7 @@ export class WebSocketsService {
    */
   public connect() {
     if (this.ready) return;
+    this.reconnectOnError = true;
 
     this.ws = new WebSocket(this.url);
 
@@ -71,24 +76,24 @@ export class WebSocketsService {
       } catch {
         this.onMessageReceived$.next({
           cid: '',
-          theme: WebSocketsTheme.UnknownCommand,
+          theme: WebSocketsTheme.BadDto,
           content: ev.data
         });
       }
     }
 
     this.ws.onclose = () => {
-      console.log(`WebSocket connection to ${this.url} was closed.`);
-    }
+      if (this.reconnectOnError)
+        setTimeout(() => { // if no connection set then onclose will be called
+          this.connect();  // so timeout is pretty good
+        }, this.reconnectionOnErrorInterval);
 
-    this.ws.onerror = (ev) => {
-      setTimeout(() => {
-        this.connect();
-      }, this.reconnectionOnErrorInterval);
+      console.log(`WebSocket connection to ${this.url} was closed.`);
     }
   }
 
   close() {
+    this.reconnectOnError = false;
     this.ws?.close();
     console.log('WebSocket connection closed on demand. No reconnection scheduled.');
   }
@@ -101,6 +106,7 @@ export class WebSocketsService {
    */
   send(m?: WebSocketsDto | string) {
     if (!this.ready) return;
+    if (!m) m = '';
     const message2send = typeof m === 'string' ? m : JSON.stringify(m);
     this.ws.send(message2send);
   }

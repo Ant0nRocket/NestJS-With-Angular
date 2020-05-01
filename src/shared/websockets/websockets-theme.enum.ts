@@ -21,7 +21,7 @@ export enum WebSocketsTheme {
 
 
     /** Use it when server didn't understand command. */
-    UnknownCommand,
+    BadDto,
 
     /** For DTO filtering */
     EndOfServiceCommands,

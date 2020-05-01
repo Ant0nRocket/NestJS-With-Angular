@@ -41,8 +41,11 @@ let AppGateway = class AppGateway {
                     this.handleDto(client, dto);
                 }
                 catch (_a) {
-                    client.send('');
+                    this.logger.warn(`Hacker attack detected. Message is: ${ev.data}`);
                 }
+            }
+            else {
+                client.send('');
             }
         };
         this.logger.log(`Client connected: ${client.id}`);
@@ -70,7 +73,7 @@ let AppGateway = class AppGateway {
                 break;
             }
             default: {
-                this.send2Client(client, websockets_theme_enum_1.WebSocketsTheme.UnknownCommand);
+                this.send2Client(client, websockets_theme_enum_1.WebSocketsTheme.BadDto, dto);
                 break;
             }
         }

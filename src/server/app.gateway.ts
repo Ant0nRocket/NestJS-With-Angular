@@ -50,8 +50,10 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
           const dto = JSON.parse(ev.data);
           this.handleDto(client, dto);
         } catch {
-          client.send('');
+          this.logger.warn(`Hacker attack detected. Message is: ${ev.data}`);
         }
+      } else {
+        client.send('');
       }
     }
 
@@ -94,7 +96,7 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
       }
 
       default: {
-        this.send2Client(client, WebSocketsTheme.UnknownCommand); break;
+        this.send2Client(client, WebSocketsTheme.BadDto, dto); break;
       }
     }
   }

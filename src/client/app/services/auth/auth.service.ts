@@ -39,9 +39,7 @@ export class AuthService {
     }
   }
 
-  constructor(
-    private http: HttpClient
-  ) { }
+  constructor(private http: HttpClient) { }
 
   public signUp(authCredentials: AuthCredentialsDto) {
     this.http.post<AuthTokenDto>(apiConfig.urlSignup, authCredentials).subscribe(
@@ -66,9 +64,13 @@ export class AuthService {
       (dto) => {
         this.authToken = dto.token;
       },
-      () => {
-        this.authToken = null;
-        this.onAuthError$.next('Invalid login or password.');
+      (err) => {
+        if (err.error.statucCode !== 504) {
+          this.authToken = null;
+          this.onAuthError$.next('Invalid login or password.');
+        } else {
+          this.onAuthError$.next("Server isn't responding. Try later.");
+        }
       }
     );
   }
@@ -76,12 +78,15 @@ export class AuthService {
   public checkToken(authTokenDto?: AuthTokenDto) {
     if (!authTokenDto)
       authTokenDto = { token: this.authToken };
+
     this.http.post(apiConfig.urlTokenCheck, authTokenDto).subscribe(
       (dto: AuthTokenDto) => {
         this.authToken = dto.token;
       },
-      () => {
-        this.authToken = null;
+      (err) => {
+        if (err.error.statucCode < 500) {
+          this.authToken = null;
+        }
       }
     );
   }
