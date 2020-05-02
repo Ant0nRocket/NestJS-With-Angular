@@ -1,10 +1,11 @@
 import { Injectable } from '@angular/core';
-import { Subscription, Subject } from 'rxjs';
-import { WebSocketsDto } from '../../../../shared/websockets/websockets.dto';
-import { environment } from '../../../environments/environment';
+import { Subject } from 'rxjs';
+
 import { ServicesModule } from '../services.module';
-import { WebSocketsTheme } from '../../../../shared/websockets/websockets-theme.enum';
 import { apiConfig } from '../../../../shared/api.config';
+import { environment } from '../../../environments/environment';
+import { WebSocketsDto } from '../../../../shared/websockets/websockets.dto';
+import { WebSocketsTheme } from '../../../../shared/websockets/websockets-theme.enum';
 
 @Injectable({
   providedIn: ServicesModule
@@ -24,12 +25,11 @@ export class WebSocketsService {
    */
   private pingPongInterval = 20000;
 
-
   /** 
    * Set to true if you need to start reconnection procedure
    * on error or close
    */
-  private reconnectOnError = true;
+  private reconnectOnClose = true;
 
   /** 
    * If WebSocket closed because of some error it will
@@ -37,6 +37,21 @@ export class WebSocketsService {
    */
   private reconnectionOnErrorInterval = 5000;
 
+  /** Max amount of reconnection attempts */
+  private reconnectionAttemptsLimit = 10;
+
+  /** Currect reconnection attempts count */
+  private reconnectionAttemptsPassed = 0;
+
+  /** 
+   * Reconnections limit reached. It's important to stop reconnection
+   * attempts after some amout fails 'cause of memory leaks
+   */
+  private get reconnectionAttemptsLimitReached(): boolean {
+    return this.reconnectionAttemptsPassed >= this.reconnectionAttemptsLimit;
+  }
+
+  /** Whether websocket open or not */
   public get ready(): boolean {
     return this.ws?.readyState === WebSocket.OPEN;
   }
@@ -65,9 +80,13 @@ export class WebSocketsService {
    */
   public connect() {
     if (this.ready) return;
-    this.reconnectOnError = true;
+    this.reconnectOnClose = true;
 
     this.ws = new WebSocket(this.url);
+
+    this.ws.onopen = () => {
+      this.reconnectionAttemptsPassed = 0;
+    };
 
     this.ws.onmessage = (ev) => { // received message
       try {
@@ -80,20 +99,26 @@ export class WebSocketsService {
           content: ev.data
         });
       }
-    }
+    };
 
     this.ws.onclose = () => {
-      if (this.reconnectOnError)
-        setTimeout(() => { // if no connection set then onclose will be called
-          this.connect();  // so timeout is pretty good
+      if (this.reconnectOnClose) {
+        setTimeout(() => {
+          if (!this.reconnectionAttemptsLimitReached && !this.ready) {
+            this.reconnectionAttemptsPassed++;
+            this.connect();
+          }
         }, this.reconnectionOnErrorInterval);
-
-      console.log(`WebSocket connection to ${this.url} was closed.`);
-    }
+      }
+    };
   }
 
+  /** 
+   * Closes connection to server (if it's in OPEN state) and blocks
+   * reconnection by setting reconnectOnClose to false.
+   */
   close() {
-    this.reconnectOnError = false;
+    this.reconnectOnClose = false;
     this.ws?.close();
     console.log('WebSocket connection closed on demand. No reconnection scheduled.');
   }
