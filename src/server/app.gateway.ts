@@ -11,7 +11,7 @@ import { WebSocketsDto } from '../shared/websockets/websockets.dto';
 import { WebSocketsTheme } from '../shared/websockets/websockets-theme.enum';
 import { apiConfig } from '../shared/api.config';
 import { AuthService } from './auth/auth.service';
-import { User } from '../shared/models/user';
+import { IUserBase } from '../shared/interfaces/user-base.interface';
 
 @Injectable()
 @WebSocketGateway(null, { path: apiConfig.urlWebSocket })
@@ -29,12 +29,6 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
   afterInit() {
     this.logger.log('Websocket started.');
   }
-
-  // isIncomingMessageValid(message: any): boolean {
-  //   if (!message) return false;
-  //   if (message === 'undefined' || message === 'null') return false;
-  //   return true;
-  // }
 
   /**
    * Moment where new client just connected
@@ -124,7 +118,7 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
    */
   async handleClientAuthentication(client: any, dto: WebSocketsDto) {
     const tokenIsValid = await this.authService
-      .isTokenValid(dto.content, (user: User) => {
+      .isTokenValid(dto.content, (user: IUserBase) => {
         client.userId = user._id;
       });
 

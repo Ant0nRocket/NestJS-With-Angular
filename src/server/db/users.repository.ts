@@ -2,14 +2,13 @@ import { Injectable } from "@nestjs/common";
 import { Collection, ObjectId } from 'mongodb';
 import { Connection } from "mongoose";
 import { InjectConnection } from "@nestjs/mongoose";
-import { apiConfig } from "../../shared/api.config";
-import { User } from "../../shared/models/user";
-import * as bcrypt from 'bcrypt';
+import { IUserFull } from "../../shared/interfaces/user-full.interface";
+import { IUserBase } from "../../shared/interfaces/user-base.interface";
 
 @Injectable()
 export class UsersRepository {
 
-    private users: Collection<User>;
+    private users: Collection<IUserFull>;
 
     constructor(@InjectConnection() private readonly mongo: Connection) {
         this.initUsersCollection();
@@ -20,7 +19,7 @@ export class UsersRepository {
     }
 
     /** Fill free to pass ObjectID, user name, phone or email here */
-    async getUserBy(user: User): Promise<User> {
+    async getUserBy(user: IUserBase): Promise<IUserFull> {
 
         const { username, email, phone, _id } = user;
         const searchRules = [];
@@ -39,7 +38,7 @@ export class UsersRepository {
     }
 
 
-    async addUser(user: User): Promise<User> {
+    async addUser(user: IUserFull): Promise<IUserFull> {
         const foundUser = await this.getUserBy(user);
         if (foundUser) return foundUser;
 
