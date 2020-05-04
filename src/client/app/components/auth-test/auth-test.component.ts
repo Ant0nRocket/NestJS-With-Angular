@@ -1,6 +1,8 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs';
 
+import { isEmail, isMobilePhone } from 'class-validator';
+
 import { ServiceBus } from '../../services/service-bus.service';
 import { SignupCredentials } from './signup-credentials';
 
@@ -54,8 +56,19 @@ export class AuthTestComponent implements OnInit, OnDestroy {
       // supress empty or space-filled values
       (event.target as HTMLInputElement).value = '';
     }
-    this.credentials.username = this.userId;
-    //TODO: determine id type: email, phone, name?
+
+    // reset all id fields to empty string
+    this.credentials.email =
+      this.credentials.phone =
+      this.credentials.username = undefined;
+
+    if (isEmail(this.userId)) {
+      this.credentials.email = this.userId;
+    } else if (isMobilePhone(this.userId)) {
+      this.credentials.phone = this.userId;
+    } else {
+      this.credentials.username = this.userId;
+    }
   }
 
   /** Fills this.errors array if any errors */

@@ -1,8 +1,6 @@
-export interface User {
+export interface IUserBase {
     _id?: any;
     username?: string;
     email?: string;
     phone?: string;
-    password?: string;
-    salt?: string;
 }
