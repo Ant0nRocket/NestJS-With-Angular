@@ -1,5 +1,5 @@
 <div class="alert alert-info el" *ngIf="serviceBus.authService.authToken">
-    <p>You are logged in (username will be provided later)</p>
+    <p>You are logged in as {{ serviceBus.authService.getAvailableUserId() }}</p>
     <button class="btn btn-danger" (click)="logout()">LOG OUT</button>
 </div>
 

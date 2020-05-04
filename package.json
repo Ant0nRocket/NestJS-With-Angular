@@ -25,6 +25,7 @@
 		"@angular/platform-browser": "^9.1.4",
 		"@angular/platform-browser-dynamic": "^9.1.4",
 		"@angular/router": "^9.1.4",
+		"@auth0/angular-jwt": "^4.0.0",
 		"@nestjs/common": "^7.0.9",
 		"@nestjs/core": "^7.0.9",
 		"@nestjs/mongoose": "^6.4.0",
