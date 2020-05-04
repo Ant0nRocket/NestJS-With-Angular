@@ -1,11 +1,13 @@
-import { IsEmail, Matches, IsMobilePhone, IsOptional, IsBooleanString, IsNotEmpty, IsString, IsNumber } from 'class-validator';
+import { IsEmail, Matches, IsMobilePhone, IsOptional, IsNumber } from 'class-validator';
 import { apiConfig } from '../api.config';
-import { User } from '../models/user';
+import { IUserFull } from '../interfaces/user-full.interface';
 
 
-/** Pass username, email or phone number as user ID.
- * Password is password. */
-export class AuthCredentialsDto implements User {
+/** 
+ * Pass username, email or phone number as user ID.
+ * Password is password. 
+ */
+export class AuthCredentialsDto implements IUserFull {
 
     @IsOptional()
     @Matches(
