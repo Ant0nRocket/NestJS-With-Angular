@@ -10,7 +10,7 @@ export class SignupCredentials extends AuthCredentialsDto {
     }
 
     isPasswordsEqual(): boolean {
-        if (!this.password) return false;
+        if (!this.password || !this.password2) return false;
         return this.password === this.password2;
     }
 

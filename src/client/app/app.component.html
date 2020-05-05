@@ -1,5 +1,22 @@
+<div class="navbar-fixed">
+    <nav>
+        <div class="nav-wrapper">
+            <ul class="">
+                <li><a routerLink="">@['NestJs', 'Angular']</a></li>
+            </ul>
+
+            <ul id="nav-mobile" class="right" *ngIf="!servicesBus.authService.authToken">
+                <li><a [routerLink]="['auth', 'sign-up']">Sign up</a></li>
+                <li><a [routerLink]="['auth', 'log-in']">Log in</a></li>
+            </ul>
+
+            <ul id="nav-mobile" class="right" *ngIf="servicesBus.authService.authToken">
+                <li><b>{{ servicesBus.authService.getAvailableUserId() }}</b></li>
+                <li><a class="waves-effect waves-light btn" (click)="servicesBus.authService.logout()">Log out</a></li>
+            </ul>
+        </div>
+    </nav>
+</div>
 <div class="container">
-    <app-auth-test></app-auth-test>
-    <app-websockets-test title="WebSockets test #1"></app-websockets-test>
-    <app-websockets-test title="WebSockets test #2"></app-websockets-test>
+    <router-outlet></router-outlet>
 </div>

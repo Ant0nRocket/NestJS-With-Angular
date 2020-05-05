@@ -1,52 +1,27 @@
-<div class="alert alert-info el" *ngIf="serviceBus.authService.authToken">
-    <p>You are logged in as {{ serviceBus.authService.getAvailableUserId() }}</p>
-    <button class="btn btn-danger" (click)="logout()">LOG OUT</button>
+<div class="row">
+    <div class="input-field">
+        <input id="username" type="text" class="validate" (keyup)="onUserIdKeyPressed($event)">
+        <label for="username">ID (username, email or phone number)</label>
+    </div>
+    <div class="input-field">
+        <input id="password" type="password" class="validate" [(ngModel)]="credentials.password">
+        <label for="password">Password</label>
+    </div>
+    <div class="input-field" *ngIf="mode === 'sign up'">
+        <input id="password2" type="password" class="validate" [(ngModel)]="credentials.password2">
+        <label for="password2">Password confirmation</label>
+    </div>
 </div>
 
-<div class="alert alert-info el" *ngIf="!serviceBus.authService.authToken">
-
-    <a href="#" (click)="mode = 'log in'" *ngIf="mode === 'sign up'">
-        <strong>
-            I already have valid credentials
-        </strong>
-    </a>
-
-    <a href="#" (click)="mode = 'sign up'" *ngIf="mode === 'log in'">
-        <strong>
-            I want to register new user
-        </strong>
-    </a>
-
-    <div class="input-group first-input-field flex-nowrap">
-        <div class="input-group-prepend">
-            <span class="input-group-text" id="addon-wrapping">
-                {{ userIdTypeText }}
-            </span>
-        </div>
-        <input type="text" class="form-control" name="username" (keyup)="onUserIdKeyPressed($event)">        
-    </div>
-
-    <div class="input-group flex-nowrap">
-        <div class="input-group-prepend">
-            <span class="input-group-text" id="addon-wrapping">
-                Password (first time):
-            </span>
-        </div>
-        <input type="password" class="form-control" name="password" [(ngModel)]="credentials.password">
-    </div>
-
-    <div class="input-group flex-nowrap" *ngIf="mode === 'sign up'">
-        <div class="input-group-prepend">
-            <span class="input-group-text" id="addon-wrapping">
-                Password (second time):
-            </span>
-        </div>
-        <input type="password" class="form-control" name="password2" [(ngModel)]="credentials.password2">
-    </div>
-
-    <div class="alert alert-danger errors-list" *ngIf="hasErrors">
+<div id="auth_errors" class="modal">
+    <div class="modal-content">
+        <h4>There are some errors</h4>
         <p *ngFor="let error of errors">{{ error }}</p>
     </div>
-
-    <button class="btn btn-info" (click)="submit()">{{ mode | uppercase}}</button>
+    <div class="modal-footer">
+        <button class="btn btn-flat modal-close waves-effect waves-green">OK, let's fix them!</button>
+    </div>
 </div>
+
+<button class="btn btn-info" (click)="submit()">{{ mode | uppercase}}</button>
+

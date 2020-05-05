@@ -1,10 +1,11 @@
+import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs';
 
 import { isEmail, isMobilePhone } from 'class-validator';
 
 import { ServiceBus } from '../../services/service-bus.service';
-import { SignupCredentials } from './signup-credentials';
+import { SignupCredentials } from '../../services/auth/signup-credentials';
 
 @Component({
   selector: 'app-auth-test',
@@ -37,12 +38,29 @@ export class AuthTestComponent implements OnInit, OnDestroy {
   userIdTypeText = 'User ID (name, email or phone)';
 
   authErrorSub: Subscription;
+  authStateSub: Subscription;
 
-  constructor(public serviceBus: ServiceBus) { }
+  constructor(
+    public serviceBus: ServiceBus,
+    private route: ActivatedRoute,
+    private router: Router
+  ) { }
 
   ngOnInit(): void {
+    this.route.params.subscribe((params) => {
+      this.errors = [];
+      this.mode = (params.mode as string).replace('-', ' ');
+    });
+
+    // subscribe on auth fails to fill errors list
     this.authErrorSub = this.serviceBus.authService.onAuthError$.subscribe(
       (err: string) => this.errors.push(err)
+    );
+
+    this.authStateSub = this.serviceBus.authService.onAuthStateChanged$.subscribe(
+      (state: boolean) => {
+        if (state) this.router.navigate(['ws']);
+      }
     );
   }
 
@@ -52,8 +70,8 @@ export class AuthTestComponent implements OnInit, OnDestroy {
 
   onUserIdKeyPressed(event: Event) {
     this.userId = (event.target as HTMLInputElement).value;
+    // supress empty or space-filled values
     if (this.userId.trim().length === 0) {
-      // supress empty or space-filled values
       (event.target as HTMLInputElement).value = '';
     }
 
@@ -91,7 +109,11 @@ export class AuthTestComponent implements OnInit, OnDestroy {
 
   submit() {
     this.checkModelErrors();
-    if (this.hasErrors) return;
+    if (this.hasErrors) {
+      const elem = document.getElementById('auth_errors');
+      M.Modal.init(elem).open();
+      return;
+    }
 
     if (this.mode === 'sign up')
       this.serviceBus.authService.signUp(this.credentials);

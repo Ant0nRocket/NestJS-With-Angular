@@ -9,6 +9,7 @@ import { AuthCredentialsDto } from '../../../../shared/auth/auth-credentials.dto
 import { apiConfig } from '../../../../shared/api.config';
 import { AuthTokenDto } from '../../../../shared/auth/auth-token.dto';
 import { IUserBase } from '../../../../shared/interfaces/user-base.interface';
+import { Router } from '@angular/router';
 
 @Injectable({
   providedIn: ServicesModule
@@ -44,7 +45,10 @@ export class AuthService {
     }
   }
 
-  constructor(private http: HttpClient) { }
+  constructor(
+    private http: HttpClient,
+    private router: Router,
+  ) { }
 
   /** Decodes token (which is IUserBase from API) and writes in this.user */
   private writeUserFromToken(authToken: string) {
@@ -125,5 +129,6 @@ export class AuthService {
   /** Sets auth token to null */
   public logout() {
     this.authToken = null;
+    this.router.navigate(['']);
   }
 }
