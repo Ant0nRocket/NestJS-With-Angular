@@ -6,6 +6,8 @@ import { HttpClientModule } from '@angular/common/http';
 import { ServicesModule } from './services/services.module';
 
 import { AppComponent } from './app.component';
+import { RouterModule } from '@angular/router';
+import { ROUTES } from './app.routes';
 
 @NgModule({
   declarations: [
@@ -16,6 +18,7 @@ import { AppComponent } from './app.component';
     BrowserModule,
     FormsModule,
     ReactiveFormsModule,
+    RouterModule.forRoot(ROUTES),
     HttpClientModule,
 
     // User modules

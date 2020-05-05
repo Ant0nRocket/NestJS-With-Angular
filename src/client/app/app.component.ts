@@ -8,7 +8,7 @@ import { ServiceBus } from './services/service-bus.service';
 })
 export class AppComponent {
   constructor(
-    private servicesBus: ServiceBus
+    public servicesBus: ServiceBus
   ) {
 
   }
