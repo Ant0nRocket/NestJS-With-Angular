@@ -7,9 +7,5 @@ import { ServiceBus } from './services/service-bus.service';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
-  constructor(
-    public servicesBus: ServiceBus
-  ) {
-
-  }
+  constructor(public servicesBus: ServiceBus) { }
 }
