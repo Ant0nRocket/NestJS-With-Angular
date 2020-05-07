@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ServiceBus } from '../../services/service-bus.service';
+import { AuthService } from '../../services/auth/auth.service';
 
 @Component({
   selector: 'app-welcome',
@@ -8,7 +8,7 @@ import { ServiceBus } from '../../services/service-bus.service';
 })
 export class WelcomeComponent implements OnInit {
 
-  constructor(public serviceBus: ServiceBus) { }
+  constructor(public authService: AuthService) { }
 
   ngOnInit(): void {
   }

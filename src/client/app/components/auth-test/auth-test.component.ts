@@ -4,8 +4,8 @@ import { Subscription } from 'rxjs';
 
 import { isEmail, isMobilePhone } from 'class-validator';
 
-import { ServiceBus } from '../../services/service-bus.service';
 import { SignupCredentials } from '../../services/auth/signup-credentials';
+import { AuthService } from '../../services/auth/auth.service';
 
 @Component({
   selector: 'app-auth-test',
@@ -37,14 +37,26 @@ export class AuthTestComponent implements OnInit, OnDestroy {
 
   userIdTypeText = 'User ID (name, email or phone)';
 
+  /** Auth service events subscriptions */
   authErrorSub: Subscription;
   authStateSub: Subscription;
 
+  /** Modal window for errors */
+  errorsModal: M.Modal;
+
   constructor(
-    public serviceBus: ServiceBus,
+    public authService: AuthService,
     private route: ActivatedRoute,
     private router: Router
   ) { }
+
+  showModal(modal: M.Modal) {
+    if (!modal)
+      modal = M.Modal.init(document.getElementById('auth_errors'));
+
+    if (!modal.isOpen)
+      modal.open();
+  }
 
   ngOnInit(): void {
     this.route.params.subscribe((params) => {
@@ -53,11 +65,14 @@ export class AuthTestComponent implements OnInit, OnDestroy {
     });
 
     // subscribe on auth fails to fill errors list
-    this.authErrorSub = this.serviceBus.authService.onAuthError$.subscribe(
-      (err: string) => this.errors.push(err)
+    this.authErrorSub = this.authService.onAuthError$.subscribe(
+      (err: string) => {
+        this.errors.push(err);
+        this.showModal(this.errorsModal);
+      }
     );
 
-    this.authStateSub = this.serviceBus.authService.onAuthStateChanged$.subscribe(
+    this.authStateSub = this.authService.onAuthStateChanged$.subscribe(
       (state: boolean) => {
         if (state) this.router.navigate(['ws']);
       }
@@ -66,6 +81,7 @@ export class AuthTestComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.authErrorSub.unsubscribe();
+    this.authStateSub.unsubscribe();
   }
 
   onUserIdKeyPressed(event: Event) {
@@ -110,20 +126,18 @@ export class AuthTestComponent implements OnInit, OnDestroy {
   submit() {
     this.checkModelErrors();
     if (this.hasErrors) {
-      const elem = document.getElementById('auth_errors');
-      M.Modal.init(elem).open();
-      return;
+      this.showModal(this.errorsModal);
+    } else {
+      if (this.mode === 'sign up')
+        this.authService.signUp(this.credentials);
+
+      if (this.mode === 'log in')
+        this.authService.login(this.credentials);
     }
-
-    if (this.mode === 'sign up')
-      this.serviceBus.authService.signUp(this.credentials);
-
-    if (this.mode === 'log in')
-      this.serviceBus.authService.login(this.credentials);
   }
 
   logout() {
-    this.serviceBus.authService.logout();
+    this.authService.logout();
     this.credentials = new SignupCredentials();
     this.errors = [];
   }
