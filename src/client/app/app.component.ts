@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { ServiceBus } from './services/service-bus.service';
+import { AuthService } from './services/auth/auth.service';
 
 @Component({
   selector: 'app-root',
@@ -8,7 +8,7 @@ import { ServiceBus } from './services/service-bus.service';
 })
 export class AppComponent {
   constructor(
-    public servicesBus: ServiceBus
+    public authService: AuthService
   ) {
 
   }
