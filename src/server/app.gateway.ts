@@ -126,8 +126,9 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
       clearTimeout(client.disconnectTimer);
       this.logger.log(`Client ${client.id} authorized. User is ${client.userId}`);
     } else {
+      this.send2Client(client, WebSocketsTheme.Unauthorized);
+      this.logger.error(`Token of client ${client.id} is invalid.`);
       client.close();
-      this.logger.error(`Token of client ${client.id} is invalid`);
     }
   }
 }
