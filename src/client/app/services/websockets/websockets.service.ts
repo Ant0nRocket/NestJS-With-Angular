@@ -75,7 +75,7 @@ export class WebSocketsService {
       try {
         const data: WebSocketsDto = JSON.parse(ev.data);
         if (data.theme === WebSocketsTheme.ClientConnected) {
-          this.sendAuthToken();
+          if (!this.sendAuthToken()) this.close();
         } else {
           this.onMessageReceived$.emit(data);
         }
@@ -104,14 +104,19 @@ export class WebSocketsService {
     };
   }
 
-  /** Sends provided JWT token DTO to server */
-  private sendAuthToken() {
+  /** 
+   * True if JWT token DTO provided to server.  
+   * False if no token exists.
+    */
+  private sendAuthToken(): boolean {
+    if (!this.authService.authToken) return false;
     const dto: WebSocketsDto = {
       cid: '',
       theme: WebSocketsTheme.AuthenticateWithToken,
       content: this.authService.authToken
     };
     this.send(dto);
+    return true;
   }
 
   /** 
