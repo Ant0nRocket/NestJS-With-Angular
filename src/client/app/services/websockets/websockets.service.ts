@@ -1,5 +1,4 @@
 import { Injectable, EventEmitter } from '@angular/core';
-import { takeWhile } from 'rxjs/operators';
 
 import { ServicesModule } from '../services.module';
 import { WebSocketOptions } from './websocket.options';
@@ -19,8 +18,8 @@ export class WebSocketsService {
   /** Connection options */
   private options: WebSocketOptions = new WebSocketOptions();
 
-  /**  */
-  private intervPingPong: number;
+  /** ID of ping-pong interval */
+  private idOfPingPongInterval: number;
 
   /** Currect reconnection attempts count */
   private reconnectionAttemptsPassed = 0;
@@ -38,44 +37,51 @@ export class WebSocketsService {
     return this.ws?.readyState === WebSocket.OPEN;
   }
 
+  /** 
+   * Occurred when WebSocket connection open. 
+   * The fact that it's open doesn't mean that it's ready.
+   * Check [ready] getter for this. 
+   */
+  public onConnectionOpen$: EventEmitter<void> = new EventEmitter();
+
+  /** Occurred when WebSocket closed for any reason */
+  public onConnectionClose$: EventEmitter<void> = new EventEmitter();
+
   /** Emits when there is new message from server */
   public onMessageReceived$: EventEmitter<WebSocketsDto> = new EventEmitter();
 
-  constructor(private authService: AuthService) { }
+  /** Occurred when some error in WebSocket connection */
+  public onConnectionError$: EventEmitter<string> = new EventEmitter();
+
+  constructor(private authService: AuthService) {
+    authService.onAuthStateChanged$.subscribe(
+      (authorized: boolean) => authorized ? this.connect() : this.close()
+    );
+  }
 
   /** 
    * Connects to WebSocket server. 
    * If there is an open connection then nothing will happen.
    */
-  public connect(options?: WebSocketOptions, onOpenCallback?: () => void) {
-    if (this.ready) return;
-    if (options) this.options = options;
+  public connect(options?: WebSocketOptions) {
+    if (this.ready) return; // already connected and authorized - return
+    if (options) this.options = options; // remember options
+    this.ws = new WebSocket(this.options.url); // initialize new websocket connection
 
-    //----------
+    this.authService.onAuthStateChanged$.pipe
 
-    this.ws = new WebSocket(this.options.url);
     this.ws.onopen = () => {
-      this.reconnectionAttemptsPassed = 0;
-      if (onOpenCallback) onOpenCallback();
-
-      this.intervPingPong =
-        window.setInterval(() => { this.send() }, this.options.pingPongIntervalMs);
-
-      this.authService.onAuthStateChanged$.pipe( // on authToken = null -> close ws
-        takeWhile(state => state === true)
-      ).subscribe(null, null, /*complete*/() => {
-        this.ws?.close();
-      })
+      this.idOfPingPongInterval =
+        window.setInterval(() => { this.send() }, this.options.IntervalOfPingPongMs);
     };
-
-
-    //----------
 
     this.ws.onmessage = (ev) => { // received message
       try {
         const data: WebSocketsDto = JSON.parse(ev.data);
         if (data.theme === WebSocketsTheme.ClientConnected) {
-          if (!this.sendAuthToken()) this.close();
+          this.sendAuthToken();
+        } else if (data.theme === WebSocketsTheme.Unauthorized) {
+          this.close();
         } else {
           this.onMessageReceived$.emit(data);
         }
@@ -88,46 +94,38 @@ export class WebSocketsService {
       }
     };
 
-    //----------
+    this.ws.onerror = (ev: Event) => {
+      this.onConnectionError$.emit(`Error: ${ev}`);
+      setTimeout(() => {
+        if (!this.reconnectionAttemptsLimitReached && !this.ready) {
+          this.reconnectionAttemptsPassed++;
+          this.connect();
+        }
+      }, this.options.intervalOfRoconnectionOnErrorMs);
+    };
 
     this.ws.onclose = () => {
-      window.clearInterval(this.intervPingPong);
-
-      if (this.options.reconnectOnClose) {
-        setTimeout(() => {
-          if (!this.reconnectionAttemptsLimitReached && !this.ready) {
-            this.reconnectionAttemptsPassed++;
-            this.connect();
-          }
-        }, this.options.reconnectionOnErrorInterval);
-      }
+      window.clearInterval(this.idOfPingPongInterval);
     };
   }
 
   /** 
-   * True if JWT token DTO provided to server.  
-   * False if no token exists.
+   * Sends existing authToken (whether it valid or not).
     */
-  private sendAuthToken(): boolean {
-    if (!this.authService.authToken) return false;
+  private sendAuthToken() {
     const dto: WebSocketsDto = {
       cid: '',
       theme: WebSocketsTheme.AuthenticateWithToken,
       content: this.authService.authToken
     };
     this.send(dto);
-    return true;
   }
 
   /** 
-   * Closes connection to server (if it's in OPEN state) and blocks
-   * reconnection by setting reconnectOnClose to false.
+   * Closes connection to server (if it's in OPEN state).
    */
   public close() {
-    const oldOptionReconnectOnClose = this.options.reconnectOnClose;
-    this.options.reconnectOnClose = false;
     this.ws?.close();
-    this.options.reconnectOnClose = oldOptionReconnectOnClose;
   }
 
   /** 

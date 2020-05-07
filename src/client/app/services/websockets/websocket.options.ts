@@ -34,19 +34,13 @@ export class WebSocketOptions {
     * if there were no packages transmited.
     * Below there is Ping-Pong code which fire every 25000 ms.
     */
-    pingPongIntervalMs = 20000;
-
-    /** 
-   * Set to true if you need to start reconnection procedure
-   * on error or close
-   */
-    public reconnectOnClose = true;
+    public IntervalOfPingPongMs = 20000;
 
     /** 
      * If WebSocket closed because of some error it will
      * try to reconnect every 5 seconds
      */
-    public reconnectionOnErrorInterval = 5000;
+    public intervalOfRoconnectionOnErrorMs = 5000;
 
     /** Max amount of reconnection attempts */
     public reconnectionAttemptsLimit = 10;
