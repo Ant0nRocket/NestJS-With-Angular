@@ -21,10 +21,7 @@ export class WebsocketsTestComponent implements OnInit, OnDestroy {
     return this.message.trim().length > 0;
   }
 
-  messages: string[] = [
-    'Build in message #1',
-    'Build in message #2'
-  ]
+  messages: string[] = []
 
   private cid: string;
 
@@ -44,7 +41,6 @@ export class WebsocketsTestComponent implements OnInit, OnDestroy {
         }
       }
     );
-    this.wss.connect();
   }
 
   ngOnDestroy(): void {
