@@ -27,9 +27,13 @@ export class WebsocketsTestComponent implements OnInit, OnDestroy {
 
   private onWebSocketMessage$: Subscription;
 
+  isLoading = true;
+
   constructor(
     public wss: WebSocketsService
-  ) { }
+  ) {
+    wss.connect();
+  }
 
   ngOnInit(): void {
     this.cid = shortid.generate();
@@ -41,6 +45,7 @@ export class WebsocketsTestComponent implements OnInit, OnDestroy {
         }
       }
     );
+    this.isLoading = false;
   }
 
   ngOnDestroy(): void {
