@@ -55,8 +55,9 @@ export class WebSocketsService {
 
   constructor(private authService: AuthService) {
     authService.onAuthStateChanged$.subscribe(
-      (authorized: boolean) => authorized ? this.connect() : this.close()
-    );
+      (authorized: boolean) => {
+        if (!authorized) this.close();
+      });
   }
 
   /** 
@@ -67,8 +68,6 @@ export class WebSocketsService {
     if (this.ready) return; // already connected and authorized - return
     if (options) this.options = options; // remember options
     this.ws = new WebSocket(this.options.url); // initialize new websocket connection
-
-    this.authService.onAuthStateChanged$.pipe
 
     this.ws.onopen = () => {
       this.idOfPingPongInterval =
