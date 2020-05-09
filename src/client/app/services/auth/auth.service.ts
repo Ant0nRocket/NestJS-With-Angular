@@ -24,12 +24,6 @@ export class AuthService {
   private _authToken: string = null;
 
   get authToken(): string {
-    if (!this._authToken) { // no token in memory, try read LS
-      const tempAuthToken = localStorage.getItem('authToken');
-      if (tempAuthToken) {
-        this._authToken = tempAuthToken;
-      }
-    }
     return this._authToken;
   }
 
@@ -48,7 +42,9 @@ export class AuthService {
   constructor(
     private http: HttpClient,
     private router: Router,
-  ) { }
+  ) {
+    this.authToken = localStorage.getItem('authToken');
+  }
 
   /** Decodes token (which is IUserBase from API) and writes in this.user */
   private writeUserFromToken(authToken: string) {
@@ -63,7 +59,7 @@ export class AuthService {
    * If nothing available - null;
    */
   public getAvailableUserId(): string {
-    if (!this.user) return null;
+    if (!this.authToken && !this.user) return null;
     if (this.user.username)
       return this.user.username;
     if (this.user.email)

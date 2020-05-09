@@ -14,7 +14,7 @@ import { AuthService } from './auth/auth.service';
 import { IUserBase } from '../shared/interfaces/user-base.interface';
 
 @Injectable()
-@WebSocketGateway(null, { path: apiConfig.urlWebSocket })
+@WebSocketGateway()
 export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
 
   constructor(
@@ -126,7 +126,9 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
       clearTimeout(client.disconnectTimer);
       this.logger.log(`Client ${client.id} authorized. User is ${client.userId}`);
     } else {
-      this.logger.error(`Token of client ${client.id} is invalid`);
+      this.send2Client(client, WebSocketsTheme.Unauthorized);
+      this.logger.error(`Token of client ${client.id} is invalid.`);
+      client.close();
     }
   }
 }
