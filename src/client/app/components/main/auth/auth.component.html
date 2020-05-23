@@ -1,4 +1,10 @@
-<form>
+<div class="auth-errors" *ngIf="isAuthErrors()">
+    <p *ngFor="let error of authErrors">{{ error }}</p>
+    <mat-divider></mat-divider>
+    <button mat-raised-button (click)="authErrors = []" color="warn">OK</button>
+</div>
+
+<form *ngIf="!isAuthErrors()">
     <div *ngIf="isLoginMode()">
         Don't have an account? <span class="like-link" (click)="toggleMode()">Register</span> now!
     </div>

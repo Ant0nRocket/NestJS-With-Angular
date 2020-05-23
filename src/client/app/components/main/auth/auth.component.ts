@@ -1,13 +1,15 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { AuthService } from '../../../services/auth/auth.service';
 import { SignupCredentials } from '../../../services/auth/signup-credentials';
+import { Subscription } from 'rxjs';
+import { Router } from '@angular/router';
 
 @Component({
 	selector: 'app-auth',
 	templateUrl: './auth.component.html',
 	styleUrls: [ './auth.component.css' ]
 })
-export class AuthComponent implements OnInit {
+export class AuthComponent implements OnInit, OnDestroy {
 	// Work mode (log-in or sign-up)
 	public mode = 'log-in';
 	public isLoginMode = () => this.mode === 'log-in';
@@ -17,9 +19,29 @@ export class AuthComponent implements OnInit {
 	// Model
 	public dto: SignupCredentials = new SignupCredentials();
 
-	constructor(private authService: AuthService) {}
+	// Auth subscribtions
+	private authStateChanged$: Subscription;
+	private authErrors$: Subscription;
 
-	ngOnInit(): void {}
+	// Auth errors
+	public authErrors: string[] = [];
+	public isAuthErrors = () => this.authErrors.length > 0;
+
+	constructor(private authService: AuthService, private router: Router) {}
+
+	ngOnInit(): void {
+		this.authStateChanged$ = this.authService.onAuthStateChanged$.subscribe((state) => {
+			if (state) this.router.navigate([ '' ]);
+		});
+		this.authErrors$ = this.authService.onAuthError$.subscribe((err) => {
+			this.authErrors.push(err);
+		});
+	}
+
+	ngOnDestroy(): void {
+		this.authErrors$.unsubscribe();
+		this.authStateChanged$.unsubscribe();
+	}
 
 	public isReadyToSubmit() {
 		if (this.isLoginMode()) {
@@ -30,6 +52,7 @@ export class AuthComponent implements OnInit {
 	}
 
 	public submit() {
+		this.authErrors = [];
 		if (this.isLoginMode()) {
 			this.authService.login(this.dto);
 		} else {
