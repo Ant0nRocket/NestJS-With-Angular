@@ -15,8 +15,7 @@ export class SignupCredentials extends AuthCredentialsDto {
     }
 
     isEmpty(): boolean {
-        return this.username?.trim().length === 0 &&
-            this.password?.length === 0 &&
-            this.isPasswordsEqual();
+        return this.id?.trim().length === 0 ||
+            this.password?.length === 0;
     }
 }

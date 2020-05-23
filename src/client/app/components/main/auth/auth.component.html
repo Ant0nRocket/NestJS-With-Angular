@@ -11,18 +11,18 @@
 
     <mat-form-field>
         <mat-label>User ID</mat-label>
-        <input matInput placeholder="login, email or mobile">
+        <input matInput placeholder="login, email or mobile" name="username" [(ngModel)]="dto.id" required>
     </mat-form-field>
 
     <mat-form-field>
         <mat-label>Password</mat-label>
-        <input matInput placeholder="Any non-empty string">
+        <input matInput type="password" placeholder="Any non-empty string" name="password" [(ngModel)]="dto.password" required>
     </mat-form-field>
 
     <mat-form-field *ngIf="isSignupMode()">
         <mat-label>Password confirmation</mat-label>
-        <input matInput placeholder="Same password once again">
+        <input matInput type="password" placeholder="Same password once again" name="password2" [(ngModel)]="dto.password2" required>
     </mat-form-field>
 
-    <button mat-raised-button color="warn">{{ mode | uppercase }}</button>
+    <button mat-raised-button color="warn" (click)="submit()" [disabled]="!isReadyToSubmit()">{{ mode | uppercase }}</button>
 </form>
