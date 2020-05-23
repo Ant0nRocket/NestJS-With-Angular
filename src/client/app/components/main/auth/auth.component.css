@@ -1,0 +1,16 @@
+.like-link {
+	text-decoration: underline;
+	color: blue;
+	cursor: pointer;
+}
+
+form {
+	display: flex;
+	flex-direction: column;
+	width: 100%;
+}
+
+mat-divider {
+	margin-top: .5rem;
+	margin-bottom: .5rem;
+}

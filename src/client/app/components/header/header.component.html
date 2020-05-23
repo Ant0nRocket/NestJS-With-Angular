@@ -3,9 +3,14 @@
         <button mat-icon-button (click)="sidebarService.toggleSidebar.emit()">
             <mat-icon>menu</mat-icon>
         </button>
-        <h1 class="app-name">Lists</h1>
-        <span fxFlex></span>
-        <button mat-raised-button color="link">
+
+        <h1>
+            <a routerLink="/" class="app-name">Lists</a>
+        </h1>
+
+        <span fxFlex>&nbsp;</span>
+
+        <button mat-raised-button color="link" [routerLink]="['/auth']" routerLinkActive="invisible">
             <mat-icon>person</mat-icon>
             LOG IN
         </button>

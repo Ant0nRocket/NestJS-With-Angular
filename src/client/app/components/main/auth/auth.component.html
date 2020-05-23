@@ -1,0 +1,28 @@
+<form>
+    <div *ngIf="isLoginMode()">
+        Don't have an account? <span class="like-link" (click)="toggleMode()">Register</span> now!
+    </div>
+
+    <div *ngIf="isSignupMode()">
+        Already have an account? <span class="like-link" (click)="toggleMode()">Log-in</span> now!
+    </div>
+
+    <mat-divider></mat-divider>
+
+    <mat-form-field>
+        <mat-label>User ID</mat-label>
+        <input matInput placeholder="login, email or mobile">
+    </mat-form-field>
+
+    <mat-form-field>
+        <mat-label>Password</mat-label>
+        <input matInput placeholder="Any non-empty string">
+    </mat-form-field>
+
+    <mat-form-field *ngIf="isSignupMode()">
+        <mat-label>Password confirmation</mat-label>
+        <input matInput placeholder="Same password once again">
+    </mat-form-field>
+
+    <button mat-raised-button color="warn">{{ mode | uppercase }}</button>
+</form>
