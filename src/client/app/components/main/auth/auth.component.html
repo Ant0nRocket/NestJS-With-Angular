@@ -1,0 +1,34 @@
+<div class="auth-errors" *ngIf="isAuthErrors()">
+    <p *ngFor="let error of authErrors">{{ error }}</p>
+    <mat-divider></mat-divider>
+    <button mat-raised-button (click)="authErrors = []" color="warn">OK</button>
+</div>
+
+<form *ngIf="!isAuthErrors()">
+    <div *ngIf="isLoginMode()">
+        Don't have an account? <span class="like-link" (click)="toggleMode()">Register</span> now!
+    </div>
+
+    <div *ngIf="isSignupMode()">
+        Already have an account? <span class="like-link" (click)="toggleMode()">Log-in</span> now!
+    </div>
+
+    <mat-divider></mat-divider>
+
+    <mat-form-field>
+        <mat-label>User ID</mat-label>
+        <input matInput placeholder="login, email or mobile" name="username" [(ngModel)]="dto.id" required>
+    </mat-form-field>
+
+    <mat-form-field>
+        <mat-label>Password</mat-label>
+        <input matInput type="password" placeholder="Any non-empty string" name="password" [(ngModel)]="dto.password" required>
+    </mat-form-field>
+
+    <mat-form-field *ngIf="isSignupMode()">
+        <mat-label>Password confirmation</mat-label>
+        <input matInput type="password" placeholder="Same password once again" name="password2" [(ngModel)]="dto.password2" required>
+    </mat-form-field>
+
+    <button mat-raised-button color="warn" (click)="submit()" [disabled]="!isReadyToSubmit()">{{ mode | uppercase }}</button>
+</form>

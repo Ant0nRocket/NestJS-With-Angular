@@ -1,0 +1,16 @@
+:host {
+	flex: 1 0 auto;
+}
+
+mat-sidenav-container {
+	min-height: 100%;
+}
+
+mat-sidenav {
+	width: 20%;
+	min-width: 250px;
+}
+
+mat-sidenav-content {
+	padding: 1rem;
+}

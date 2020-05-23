@@ -1,0 +1,31 @@
+<mat-toolbar color="primary">
+    <mat-toolbar-row>
+        <button mat-icon-button (click)="sidebarService.toggleSidebar.emit()">
+            <mat-icon>menu</mat-icon>
+        </button>
+
+        <h1>
+            <a routerLink="/" class="app-name">Lists</a>
+        </h1>
+        
+        <span fxFlex></span>
+
+        <button mat-raised-button color="warn" [routerLink]="['/auth']" routerLinkActive="invisible" *ngIf="!authService.authToken">
+            <mat-icon>person</mat-icon> LOG IN
+        </button>
+
+        <div *ngIf="authService.authToken">
+            <mat-menu #appMenu="matMenu">
+                <button mat-menu-item (click)="authService.logout()">
+                    <mat-icon>exit_to_app</mat-icon>
+                    Exit
+                </button>
+            </mat-menu>
+            
+            <button mat-raised-button [matMenuTriggerFor]="appMenu">
+                <mat-icon>person</mat-icon>
+                {{ authService.user.username || authService.user.email || authService.user.phone }}
+            </button>
+        </div>
+    </mat-toolbar-row>
+</mat-toolbar>

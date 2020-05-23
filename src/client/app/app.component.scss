@@ -1,7 +1,5 @@
-.brand-logo {
-	margin-left: 0.5rem;
-}
-
-.container {
-	margin-top: 1.5rem;
+:host {
+	display: flex;
+	flex-direction: column;
+	min-height: 100%;
 }
