@@ -1,3 +1,84 @@
-<p>
-    Lorem ipsum dolor sit amet consectetur adipisicing elit. Ea ducimus asperiores fuga eius, delectus porro provident optio explicabo iure ex similique odio! Mollitia, excepturi laboriosam dolorum eius doloribus cupiditate, numquam aut magnam nemo magni exercitationem cum illo dolore animi expedita consequuntur at fugit vel. Recusandae iusto quae, necessitatibus sed doloremque, aspernatur possimus iste non praesentium consequatur nisi magnam accusamus nam impedit quas maxime eaque voluptas, architecto error nostrum harum laboriosam! Dolor enim velit totam possimus vel obcaecati aliquid eius cumque? Neque expedita maxime ipsa, totam officia recusandae earum voluptatibus impedit accusantium, suscipit mollitia optio assumenda natus dolorum animi a unde nam fugiat obcaecati? Amet hic provident eaque harum nisi. Ratione voluptatem mollitia quam repellat, rem ea vel eveniet delectus ex similique saepe? Inventore impedit autem eos sunt ex numquam similique ipsa? Ipsam ea temporibus obcaecati cum mollitia. Magni nobis repellat neque, nisi impedit velit commodi? Beatae fuga culpa praesentium sit exercitationem sequi nesciunt aspernatur dolores quam, earum laudantium repellat nihil, dignissimos asperiores nemo, enim ipsa quod! Velit distinctio magni fugit quas accusamus. Quam soluta fugit similique illum beatae culpa accusamus eum quibusdam quas, tenetur alias officiis et rerum adipisci, quidem harum voluptates maxime facilis nam. Fugit nemo quidem repellendus adipisci nisi impedit consectetur iusto neque. Consectetur sit dolorum nobis ab ex temporibus repellendus quae quidem incidunt aliquid omnis rem soluta, dolores totam fugit reiciendis accusamus? Repellendus minima aspernatur blanditiis vero? Delectus, voluptas adipisci iusto soluta esse cum ducimus aut non eius nisi officiis vitae suscipit totam veniam! Ducimus, laudantium tempora.
-</p>
+<div *ngIf="!authService.authToken">
+    <p>
+        Hello and welcome to <b>NestJS with Angular</b> website. <br>
+        My name is <a href="mailto:anton.stephanyak@gmail.com">Anton Stephanyak</a>
+        (aka Ant0nRocket <sup><a href="https://github.com/Ant0nRocket" target="_blank">GIT</a></sup>) and I'm glad to see you!
+    </p>
+    <p>
+        Main purpose of this resource is to demonstrate my ability of creating
+        websites such as this one. 
+    </p>
+    <p>
+        In the top-right corner there is a LOG IN button. Please, click it and perform quick
+        registration (provide fake ID, no confirmation required, you will immediately loged-in).<br>
+        There are two reasons why you should do that:
+    </p>
+    <ol>
+        <li>
+            I'll proove my ability of creating auth stuff.
+        </li>
+        <li>
+            WebSockets features available only for signed-in users.
+        </li>
+    </ol>
+</div>
+
+<div *ngIf="authService.authToken">
+    <p *ngIf="!hasMessages()">
+        Outstanding, <b>{{ authService.user.username || authService.user.email || authService.user.phone }}</b>!
+    </p>
+    <p *ngIf="!hasMessages()">
+        Now you can perform WebSockets test.
+    </p>
+    <p *ngIf="webSocketConnectInProgress">Let's wait few seconds for connection to be established...</p>
+
+    <div *ngIf="!webSocketConnectInProgress && !webSockets.ready">
+        <p>Ooops! I'm very sorry, but something goes wrong with back-end. Please, try later :(</p>
+    </div>
+
+    <div *ngIf="!webSocketConnectInProgress && webSockets.ready">
+        <p *ngIf="!hasMessages()">
+            Ok! Everything is ready! Our back-end had just accepted our connection. Let's play a ping-pong game with him!
+        </p>
+        <p *ngIf="!hasMessages()">
+            See that button with "TEST" label? When you will click it, a random string will be generated
+            and sent to the server via WebSocket. Then the server will return us this string and you will see its 
+            content in the list below. Go ahead! Click!
+        </p>
+        <p>
+            <button mat-stroked-button color="link" (click)="testWebSockets()">TEST</button>            
+        </p>
+        <ol>
+            <li *ngFor="let message of (onMessage | async)">{{ message }}</li>
+        </ol>
+
+        <div *ngIf="hasMessages()">
+            <mat-divider></mat-divider>
+    
+            <p>And all that messages are not just client generated and added in list. They truly were sent to server and get back. You can easily check this in Network tab of the development tools of your browser. Just select "/" websocket connection and look inside the tab "Messages".</p>
+        </div>
+    </div>
+</div>
+
+<mat-divider></mat-divider>
+
+<mat-expansion-panel>
+    <mat-expansion-panel-header>
+        List of technologies used here
+    </mat-expansion-panel-header>
+    <ul>
+        <li>Angular (for front-end)</li>
+        <ul>
+            <li>Angular Material components were used for styling</li>
+        </ul>
+        <li>NestJS (for back-end)</li>
+        <li>TypeScript (both for front and back)</li>
+        <li>WebSockets API</li>
+        <li>MongoDB</li>
+        <li>Git</li>
+        <li>Heroku (deploying using one of project's git branches)</li>
+        <ul>
+            <li>mLab addon for production MongoDB base</li>
+        </ul>
+    </ul>
+</mat-expansion-panel>

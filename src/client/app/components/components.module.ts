@@ -12,6 +12,7 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
+import { MatExpansionModule } from '@angular/material/expansion';
 
 import { HeaderComponent } from './header/header.component';
 import { MainComponent } from './main/main.component';
@@ -45,7 +46,8 @@ import { AuthComponent } from './main/auth/auth.component';
 		MatMenuModule,
 		MatIconModule,
 		MatButtonModule,
-		MatInputModule
+		MatInputModule,
+		MatExpansionModule
 	]
 })
 export class ComponentsModule {}
