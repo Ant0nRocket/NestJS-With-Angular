@@ -10,7 +10,7 @@ import { apiConfig } from '../../../../shared/api.config';
 import { AuthTokenDto } from '../../../../shared/auth/auth-token.dto';
 import { IUserBase } from '../../../../shared/interfaces/user-base.interface';
 import { Router } from '@angular/router';
-import { SignupCredentials } from './signup-credentials';
+import { SignupLoginCredentials } from './signup-login-credentials';
 
 @Injectable({
 	providedIn: ServicesModule
@@ -55,7 +55,7 @@ export class AuthService {
 
 	//----------------------------------------------------------------
 	/** Sends auth credentials to server and subscribes to response */
-	public signUp(authCredentials: SignupCredentials) {
+	public signUp(authCredentials: SignupLoginCredentials) {
 		this.http.post<AuthTokenDto>(apiConfig.urlSignup, authCredentials).subscribe(
 			// remember that authToken setter will call appropriate subject
 			(dto) => {

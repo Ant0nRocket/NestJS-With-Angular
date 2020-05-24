@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { AuthService } from '../../../services/auth/auth.service';
-import { SignupCredentials } from '../../../services/auth/signup-credentials';
+import { SignupLoginCredentials } from '../../../services/auth/signup-login-credentials';
 import { Subscription } from 'rxjs';
 import { Router } from '@angular/router';
 
@@ -14,10 +14,13 @@ export class AuthComponent implements OnInit, OnDestroy {
 	public mode = 'log-in';
 	public isLoginMode = () => this.mode === 'log-in';
 	public isSignupMode = () => !this.isLoginMode();
-	public toggleMode = () => (this.mode = this.isLoginMode() ? 'sign-up' : 'log-in');
+	public toggleMode = () => {
+		this.mode = this.isLoginMode() ? 'sign-up' : 'log-in';
+		this.authErrors = [];
+	};
 
 	// Model
-	public dto: SignupCredentials = new SignupCredentials();
+	public credentials: SignupLoginCredentials = new SignupLoginCredentials();
 
 	// Auth subscribtions
 	private authStateChanged$: Subscription;
@@ -43,20 +46,21 @@ export class AuthComponent implements OnInit, OnDestroy {
 		this.authStateChanged$.unsubscribe();
 	}
 
-	public isReadyToSubmit() {
-		if (this.isLoginMode()) {
-			return !this.dto.isEmpty();
-		} else {
-			return !this.dto.isEmpty() && this.dto.isPasswordsEqual();
-		}
-	}
-
-	public submit() {
+	public submit(event: Event) {
+		// we could be here only if SUBMIT which is enabled only
+		// if form is valid. But we should manually check pass1 and pass2.
 		this.authErrors = [];
+
 		if (this.isLoginMode()) {
-			this.authService.login(this.dto);
+			// nothing to check here, go ahead!
+			this.authService.login(this.credentials);
 		} else {
-			this.authService.signUp(this.dto);
+			if (!this.credentials.isPasswordsEqual()) {
+				event.preventDefault(); // stop submitting
+				this.authErrors.push('Passwords must be equal.');
+			} else {
+				this.authService.signUp(this.credentials);
+			}
 		}
 	}
 }

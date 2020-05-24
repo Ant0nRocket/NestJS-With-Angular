@@ -1,6 +1,6 @@
 import { AuthCredentialsDto } from '../../../../shared/auth/auth-credentials.dto';
 
-export class SignupCredentials extends AuthCredentialsDto {
+export class SignupLoginCredentials extends AuthCredentialsDto {
 	password2: string = '';
 
 	constructor() {
