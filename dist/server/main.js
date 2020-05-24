@@ -13,6 +13,7 @@ const core_1 = require("@nestjs/core");
 const platform_ws_1 = require("@nestjs/platform-ws");
 const app_module_1 = require("./app.module");
 const common_1 = require("@nestjs/common");
+const compression = require("compression");
 const logger = new common_1.Logger('App');
 logger.log(`process.env.PORT = ${process.env.PORT}`);
 logger.log(`process.env.MONGODB_URI = ${process.env.MONGODB_URI}`);
@@ -20,6 +21,7 @@ function bootstrap() {
     return __awaiter(this, void 0, void 0, function* () {
         const app = yield core_1.NestFactory.create(app_module_1.AppModule);
         app.enableCors();
+        app.use(compression());
         app.useWebSocketAdapter(new platform_ws_1.WsAdapter(app));
         yield app.listen(process.env.PORT || 3000);
     });

@@ -10,6 +10,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const class_validator_1 = require("class-validator");
+const class_validator_2 = require("class-validator");
 const api_config_1 = require("../api.config");
 class AuthCredentialsDto {
     get hasSomeId() {
@@ -18,6 +19,21 @@ class AuthCredentialsDto {
                 if (!this.phone)
                     return undefined;
         return 1;
+    }
+    set id(id) {
+        this.username = null;
+        this.email = null;
+        this.phone = null;
+        if (class_validator_2.isEmail(id))
+            this.email = id;
+        else if (class_validator_2.isMobilePhone(id))
+            this.phone = id;
+        else
+            this.username = id;
+    }
+    get id() {
+        const id = this.username || this.email || this.phone;
+        return id;
     }
 }
 __decorate([
@@ -38,7 +54,7 @@ __decorate([
     __metadata("design:type", String)
 ], AuthCredentialsDto.prototype, "phone", void 0);
 __decorate([
-    class_validator_1.IsNumber({}, { message: "no username, email or phone found" }),
+    class_validator_1.IsNumber({}, { message: 'no username, email or phone found' }),
     __metadata("design:type", Number),
     __metadata("design:paramtypes", [])
 ], AuthCredentialsDto.prototype, "hasSomeId", null);

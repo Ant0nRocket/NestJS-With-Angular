@@ -1,31 +1,31 @@
 {
-  "name": "nestjs-with-angular",
-  "version": "0.0.1",
-  "description": "Example of Angular and NestJS development",
-  "author": "Ant0nRocket (anton.stephanyak@gmail.com)",
-  "engines": {
-    "node": "12.16.1"
-  },
-  "scripts": {
-    "start": "node ./dist/server/main.js"
-  },
-  "dependencies": {
-    "@nestjs/common": "^7.0.13",
-    "@nestjs/core": "^7.0.13",
-    "@nestjs/mongoose": "^6.4.0",
-    "@nestjs/platform-express": "^7.0.13",
-    "@nestjs/platform-socket.io": "^7.0.13",
-    "@nestjs/platform-ws": "^7.0.13",
-    "@nestjs/serve-static": "^2.1.1",
-    "@nestjs/websockets": "^7.0.13",
-    "bcrypt": "^4.0.1",
-    "class-transformer": "^0.2.3",
-    "class-validator": "^0.12.2",
-    "jsonwebtoken": "^8.5.1",
-    "mongoose": "^5.9.14",
-    "reflect-metadata": "^0.1.13",
-    "rxjs": "^6.5.5",
-    "shortid": "^2.2.15",
-    "ws": "^7.3.0"
-  }
+	"name": "nestjs-with-angular",
+	"version": "0.0.1",
+	"description": "Example of Angular and NestJS development",
+	"author": "Ant0nRocket (anton.stephanyak@gmail.com)",
+	"engines": {
+		"node": "12.16.1"
+	},
+	"scripts": {
+		"start": "node ./dist/server/main.js"
+	},
+	"dependencies": {
+		"@nestjs/common": "^7.0.13",
+		"@nestjs/core": "^7.0.13",
+		"@nestjs/mongoose": "^6.4.0",
+		"@nestjs/platform-express": "^7.0.13",
+		"@nestjs/platform-ws": "^7.0.13",
+		"@nestjs/serve-static": "^2.1.1",
+		"@nestjs/websockets": "^7.0.13",
+		"bcrypt": "^4.0.1",
+		"class-transformer": "^0.2.3",
+		"class-validator": "^0.12.2",
+		"compression": "^1.7.4",
+		"jsonwebtoken": "^8.5.1",
+		"mongoose": "^5.9.14",
+		"reflect-metadata": "^0.1.13",
+		"rxjs": "^6.5.5",
+		"shortid": "^2.2.15",
+		"ws": "^7.3.0"
+	}
 }
