@@ -4,11 +4,17 @@
 	cursor: pointer;
 }
 
-form,
-.auth-errors {
+form {
 	display: flex;
 	flex-direction: column;
 	width: 100%;
+}
+
+.auth-errors {
+	margin-bottom: 3rem;
+	border: 2px dashed red;
+	padding: .5rem;
+	background-color: lightgreen;
 }
 
 mat-divider {
